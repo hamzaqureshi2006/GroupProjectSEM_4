@@ -1,0 +1,9 @@
+Cloudinary:
+    cloud name : ddtw2pylw
+    api key : 874783655374799
+    api secret : 7ooeyjRATwHM9PGSN_HBTf6Uf60
+
+
+We are making a GroupProject : SocialMediaPlatform,
+there are 5 students in our group,
+this is combined project of Python + MERN

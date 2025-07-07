@@ -1,0 +1,48 @@
+
+### 1. **Why are JWT and localStorage not safe?**
+- **localStorage is accessible by JavaScript:**  
+  If your site has an XSS vulnerability, attackers can steal JWTs from localStorage.
+- **No HttpOnly flag:**  
+  localStorage cannot be protected with HttpOnly, so tokens are always exposed to client-side scripts.
+- **Manual token invalidation is hard:**  
+  JWTs are stateless; once issued, they’re valid until expiry unless you implement extra logic to revoke them.
+
+---
+
+### 2. **Why are session and cookies not scalable?**
+- **Server-side storage:**  
+  Sessions require the server to store session data (often in memory or a database). As your user base grows, this can become a bottleneck.
+- **Sticky sessions:**  
+  In a distributed system (multiple servers), you need to ensure requests from the same user go to the same server, or use a shared session store (like Redis), which adds complexity.
+- **Resource intensive:**  
+  More users = more server memory/storage needed for sessions.
+
+---
+
+### 3. **Why is JWT in HttpOnly cookie best for a social media platform?**
+- **Security:**  
+  HttpOnly cookies are not accessible via JavaScript, protecting against XSS.
+- **Stateless:**  
+  JWTs don’t require server-side storage, making them scalable for many users.
+- **Automatic handling:**  
+  Cookies are sent automatically with each request, making authentication seamless for web apps.
+- **Easy logout/invalidation:**  
+  You can expire the cookie on logout, and use short-lived JWTs with refresh tokens for extra security.
+
+---
+
+**Summary Table:**
+
+| Method                | Security | Scalability | Ease of Use | Best For                |
+|-----------------------|----------|-------------|-------------|-------------------------|
+| JWT + localStorage    | ❌       | ✅          | Manual      | APIs, mobile apps       |
+| Session + Cookie      | ✅       | ❌          | Automatic   | Small/medium web apps   |
+| JWT + HttpOnly Cookie | ✅       | ✅          | Automatic   | Social media/web apps   |
+
+---
+
+**Conclusion:**  
+For a social media platform, **JWT in HttpOnly cookies** gives you the best mix of security and scalability.  
+- **Avoid localStorage for tokens.**
+- **Avoid server-side sessions for large-scale apps.**
+- **Use JWT in HttpOnly cookies for secure, scalable, and user-friendly authentication.**

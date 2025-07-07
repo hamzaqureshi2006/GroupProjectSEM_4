@@ -1,0 +1,99 @@
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const User = require('../models/User');
+
+// POST /register
+const registerUser = async (req, res) => {
+  const { channelName, email, phone, password } = req.body;
+  try {
+    const existingUser = await User.findOne({ email });
+    if (existingUser) return res.status(400).json({ message: 'Email already exists' });
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const logoUrl = req.file?.path || '';
+
+    const user = new User({
+      channelName,
+      email,
+      phone,
+      password: hashedPassword,
+      logo: logoUrl,
+    });
+
+    await user.save();
+    res.status(201).json({ message: 'User registered successfully' });
+  }
+  catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// POST /login
+const loginUser = async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const user = await User.findOne({ email });
+    if (!user) return res.status(400).json({ message: 'No such email exists' });
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(400).json({ message: 'Invalid Password' });
+
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+      expiresIn: '7d'
+    });
+
+    // Set JWT as HttpOnly cookie
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production', // send cookie only over HTTPS in production
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+    });
+
+    // Return user object only (no token in body)
+    res.json({ user });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+// POST /:id/subscribe
+const subscribeUser = async (req, res) => {
+  const currentUserId = req.userId; // send in request body
+  const targetUserId = req.body.targetUserId;
+
+  try {
+    if (currentUserId === targetUserId) {
+      return res.status(400).json({ message: "Can't subscribe to yourself" });
+    }
+
+    const targetUser = await User.findById(targetUserId);
+    const currentUser = await User.findById(currentUserId);
+
+    if (!targetUser || !currentUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Prevent duplicate subscription
+    if (currentUser.subscribedChannels.includes(targetUserId)) {
+      return res.status(400).json({ message: 'Already subscribed' });
+    }
+
+    currentUser.subscribedChannels.push(targetUserId);
+    targetUser.subscribers += 1;
+
+    await currentUser.save();
+    await targetUser.save();
+
+    res.json({ message: 'Subscribed successfully' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+module.exports = {
+  registerUser,
+  loginUser,
+  subscribeUser
+};
