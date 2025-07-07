@@ -1,0 +1,84 @@
+/* Reset */
+body,
+html,
+.homepage {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+.navbar {
+    background-color: #333;
+    color: #fff;
+    display: flex;
+    padding: 10px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    font-size: 20px;
+    color: white;
+}
+
+.navbar-search input {
+    padding: 5px;
+    margin-right: 5px;
+}
+
+.navbar-search button {
+    padding: 5px 10px;
+}
+
+.navbar-actions button {
+    margin-left: 10px;
+    padding: 5px 10px;
+}
+
+.content {
+    display: flex;
+}
+
+.sidebar {
+    width: 200px;
+    background-color: #f4f4f4;
+    min-height: 100vh;
+    padding: 10px;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar li {
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+.video-feed {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+    padding: 15px;
+}
+
+.video-card {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    text-align: center;
+}
+
+.video-card img {
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+}
+
+.video-card button {
+    margin-top: 5px;
+    padding: 5px 10px;
+}
