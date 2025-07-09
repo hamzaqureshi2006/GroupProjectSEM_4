@@ -1,0 +1,12 @@
+3 main 
+
+1. article summerization   
+2. recommendation system  :  will return video ID of 10 video , infinite scrolling
+  1. user cluster
+  2. video cluster
+3. fake news ( webscraping + RAG based model )
+4. spam comments   ( link , free  )
+
+
+Admin Panel ??
+    what will admin do?
