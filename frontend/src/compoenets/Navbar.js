@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 function Navbar() {
     const [user, setUser] = useState(null);
+    const [searchQuery, setSearchQuery] = useState("");
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -45,8 +46,13 @@ function Navbar() {
             <div className="navbar-brand">MySocialMedia</div>
 
             <div className="navbar-search">
-                <input type="text" placeholder="Search" style={{ padding: "5px" }} />
-                <button className="btn btn-primary" style={{ marginLeft: "5px", padding: "5px 10px" }}>Search</button>
+                <input type="text" placeholder="Search" style={{ padding: "5px" }}
+                    onChange={(e) => { setSearchQuery(e.target.value) }} />
+                <button className="btn btn-primary" style={{ marginLeft: "5px", padding: "5px 10px" }}
+                    onClick={() => navigate(`/search?search_query=${searchQuery}`)}
+                >
+                    Search
+                </button>
             </div>
 
             <div className="navbar-actions" style={{

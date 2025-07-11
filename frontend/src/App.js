@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import "./App.css";
 
 // Import your page components
 import HomePage from "./pages/HomePage";
@@ -21,26 +22,26 @@ function App() {
         {/* Home Page */}
         <Route path="/" element={<HomePage />} />
 
-        {/* Auth Pages */}
+        {/* Authentication Pages */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
 
-        {/* upload video page */}
+        {/* Profile Settings Page */}
+        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/settings" element={<SettingsPage />} />
+
+
+        {/* Video Pages*/}
+        <Route path="/search" element={<SearchResultsPage />} />
         <Route path="/upload" element={<UploadVideoPage />} />
-        {/* Liked Videos Page */}
+        <Route path="/video/:id" element={<VideoWatchPage />} />
         <Route path="/liked" element={<LikedVideosPages />} />
-        {/* Watch History Page */}
         <Route path="/watchHistory" element={<WatchHistoryPage />} />
 
-        {/* Video Watch Page */}
-        <Route path="/video/:id" element={<VideoWatchPage />} />
-
+        {/* News Page */}
         <Route path="/news" element={<NewsPage />} />
 
-        <Route path="/search" element={<SearchResultsPage />} />
 
-        <Route path="/settings" element={<SettingsPage />} />
       </Routes>
     </Router>
   );

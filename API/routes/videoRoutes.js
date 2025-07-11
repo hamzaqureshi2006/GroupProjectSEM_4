@@ -7,11 +7,9 @@ const authenticate = require('../middleware/authenticate');
 const {
   uploadVideoController,
   deleteVideo,
-  getAllVideos,
   getOwnVideos,
   getVideoById,
-  getVideosByCategory,
-  getVideosByTags
+  searchVideos
 } = require('../controllers/videoController');
 
 // upload video , delete video , get Liked videos , get viewed videos 
@@ -29,20 +27,15 @@ router.post(
 // Delete a video
 router.delete('/:id', authenticate, deleteVideo);
 
-// Get all videos
-router.get('/', getAllVideos);
 
 // Get videos uploaded by the authenticated user
 router.get('/user/:id', authenticate, getOwnVideos);
 
 // Get a single video by ID
-router.get('/:id', getVideoById);
+router.get('/getVideo/:id', getVideoById);
 
-// Get videos by category
-router.get('/category/:category', getVideosByCategory);
-
-// Get videos by tags (passed in body)
-router.post('/tags', getVideosByTags);
+// Search videos by title or tags
+router.post('/search', searchVideos);
 
 module.exports = router;
 

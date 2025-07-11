@@ -1,10 +1,9 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import Navbar from "../compoenets/Navbar";
-import "./HomePage.css";
+import Sidebar from "../compoenets/Sidebar";
 
 function HomePage() {
-    const navigate = useNavigate();
+
 
     // Dummy video data
     const videos = Array.from({ length: 9 }, (_, i) => ({
@@ -23,15 +22,7 @@ function HomePage() {
 
             <div className="content">
                 {/* Sidebar */}
-                <aside className="sidebar bg-light p-3" style={{ minHeight: "100vh", borderRight: "1px solid #dee2e6" }}>
-                    <ul className="list-unstyled">
-                        <li className="mb-3 sidebar-item" onClick={() => navigate("/")}>Home</li>
-                        <li className="mb-3 sidebar-item" onClick={() => navigate("/liked")}>Liked Videos</li>
-                        <li className="mb-3 sidebar-item" onClick={() => navigate("/subscribedChannels")}>Subscribed Channels</li>
-                        <li className="mb-3 sidebar-item" onClick={() => navigate("/watchHistory")}>Watch History</li>
-                        <li className="mb-3 sidebar-item" onClick={() => navigate("/news")}>News</li>
-                    </ul>
-                </aside>
+                <Sidebar />
 
 
                 {/* Video Feed */}

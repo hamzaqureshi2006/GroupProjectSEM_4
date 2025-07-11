@@ -31,16 +31,6 @@ const uploadVideoController = async (req, res) => {
   }
 };
 
-// Get all videos
-const getAllVideos = async (req, res) => {
-  try {
-    const videos = await Video.find().sort({ createdAt: -1 }).populate('user_id', 'username');
-    res.status(200).json(videos);
-  } catch (error) {
-    res.status(500).json({ message: 'Failed to fetch videos', error: error.message });
-  }
-};
-
 // View a video
 const viewVideo = async (req, res) => {
   try {
@@ -150,6 +140,7 @@ const getOwnVideos = async (req, res) => {
 
 // Get one video by ID
 const getVideoById = async (req, res) => {
+  console.log("Hello World ");
   try {
     const video = await Video.findById(req.params.id).populate('user_id', 'username');
     if (!video) return res.status(404).json({ message: 'Video not found' });
@@ -159,39 +150,54 @@ const getVideoById = async (req, res) => {
   }
 };
 
-// Get videos by category
-const getVideosByCategory = async (req, res) => {
-  try {
-    const category = req.params.category;
-    const videos = await Video.find({ category }).sort({ createdAt: -1 });
-    res.status(200).json(videos);
-  } catch (error) {
-    res.status(500).json({ message: 'Failed to get videos by category', error: error.message });
-  }
-};
 
-// Get videos by tags (query param: ?tags=music,coding)
-const getVideosByTags = async (req, res) => {
+const searchVideos = async (req, res) => {
+  const { query } = req.body;
+  console.log("Search query:", query);
+  if (!query) return res.status(400).json({ message: "Query missing" });
+
+  const words = query.split(/[\s,]+/).map(word => word.trim()).filter(Boolean);
+  if (words.length === 0) return res.status(400).json({ message: "No valid words in query" });
+
   try {
-    const tagList = req.query.tags?.split(',') || [];
-    const videos = await Video.find({ tags: { $in: tagList } }).sort({ createdAt: -1 });
-    res.status(200).json(videos);
-  } catch (error) {
-    res.status(500).json({ message: 'Failed to get videos by tags', error: error.message });
+    // High priority: Videos where ALL words in tags AND title contains at least one word
+    const highPriority = await Video.find({
+      $and: [
+        { tags: { $all: words } },
+        { title: { $regex: words.join("|"), $options: "i" } }
+      ]
+    });
+
+    const highPriorityIds = highPriority.map(v => v._id);
+
+    // Low priority: Videos where ANY word in tags OR title, excluding high priority videos
+    const lowPriority = await Video.find({
+      _id: { $nin: highPriorityIds },
+      $or: [
+        { tags: { $in: words } },
+        { title: { $regex: words.join("|"), $options: "i" } }
+      ]
+    });
+
+    // Combine results
+    const results = [...highPriority, ...lowPriority];
+
+    res.json({ results });
+  } catch (err) {
+    console.error("Error in searchVideos:", err.message);
+    res.status(500).json({ message: "Server error while searching videos" });
   }
 };
 
 
 module.exports = {
   uploadVideoController,
-  getAllVideos,
   viewVideo,
   likeVideo,
   dislikeVideo,
   deleteVideo,
   getOwnVideos,
+  searchVideos,
   getVideoById,
-  getVideosByCategory,
-  getVideosByTags
 };
 
