@@ -6,6 +6,7 @@ const upload = require('../middleware/multer');
 const {
   registerUser,
   loginUser,
+  getUserDetails,
   subscribeUser
 } = require('../controllers/userController');
 
@@ -15,6 +16,10 @@ router.post('/register', upload.single('logo'), registerUser);
 
 // POST /api/users/login
 router.post('/login', loginUser);
+
+// GET /api/users/me
+router.get('/me', authenticate, getUserDetails);
+
 
 // POST /api/users/:id/subscribe
 router.post('/subscribe', authenticate, subscribeUser);

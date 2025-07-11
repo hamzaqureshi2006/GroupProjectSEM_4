@@ -82,3 +82,18 @@ html,
     margin-top: 5px;
     padding: 5px 10px;
 }
+
+.sidebar-item {
+    cursor: pointer;
+    padding: 8px 10px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease, transform 0.2s ease, font-weight 0.2s ease, color 0.2s ease;
+}
+
+.sidebar-item:hover {
+    background-color: #f1f3f5;
+    /* light background */
+    /* darker text, Bootstrap dark color */
+    transform: scale(1.05);
+    /* slightly bigger */
+}

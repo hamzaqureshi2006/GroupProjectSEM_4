@@ -4,7 +4,7 @@ const User = require('../models/User');
 
 // POST /register
 const registerUser = async (req, res) => {
-  const { channelName, email, phone, password } = req.body;
+  const { channelName, email, password } = req.body;
   try {
     const existingUser = await User.findOne({ email });
     if (existingUser) return res.status(400).json({ message: 'Email already exists' });
@@ -16,7 +16,6 @@ const registerUser = async (req, res) => {
     const user = new User({
       channelName,
       email,
-      phone,
       password: hashedPassword,
       logo: logoUrl,
     });
@@ -47,7 +46,7 @@ const loginUser = async (req, res) => {
     res.cookie('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production', // send cookie only over HTTPS in production
-      sameSite: 'strict',
+      sameSite: 'lax',// CSRF protection
       maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
     });
 
@@ -57,6 +56,21 @@ const loginUser = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+const getUserDetails = async (req, res) => {
+  try {
+    const user = await User.findById(req.userId);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    res.json({
+      channelName: user.channelName,
+      email: user.email,
+      logo: user.logo,
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+}
 
 // POST /:id/subscribe
 const subscribeUser = async (req, res) => {
@@ -95,5 +109,6 @@ const subscribeUser = async (req, res) => {
 module.exports = {
   registerUser,
   loginUser,
+  getUserDetails,
   subscribeUser
 };

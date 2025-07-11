@@ -3,13 +3,16 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 // Import your page components
 import HomePage from "./pages/HomePage";
-import LoginPage from "./pages/LoginPage";
-import RegisterPage from "./pages/RegisterPage";
-import ProfilePage from "./pages/ProfilePage";
-import VideoWatchPage from "./pages/VideoWatchPage";
-import NewsPage from "./pages/NewsPage";
-import SearchResultsPage from "./pages/SearchResultsPage";
-import SettingsPage from "./pages/SettingsPage";
+import LoginPage from "./pages/auth/LoginPage";
+import RegisterPage from "./pages/auth/RegisterPage";
+import ProfilePage from "./pages/profile/ProfilePage";
+import SettingsPage from "./pages/profile/SettingsPage";
+import NewsPage from "./pages/news/NewsPage";
+import UploadVideoPage from "./pages/videos/UploadVideoPage";
+import VideoWatchPage from "./pages/videos/VideoWatchPage";
+import SearchResultsPage from "./pages/videos/SearchResultsPage";
+import LikedVideosPages from "./pages/videos/LikedVideosPages";
+import WatchHistoryPage from "./pages/videos/WatchHistoryPage";
 
 function App() {
   return (
@@ -21,20 +24,22 @@ function App() {
         {/* Auth Pages */}
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-
-        {/* User Profile */}
         <Route path="/profile" element={<ProfilePage />} />
+
+        {/* upload video page */}
+        <Route path="/upload" element={<UploadVideoPage />} />
+        {/* Liked Videos Page */}
+        <Route path="/liked" element={<LikedVideosPages />} />
+        {/* Watch History Page */}
+        <Route path="/watchHistory" element={<WatchHistoryPage />} />
 
         {/* Video Watch Page */}
         <Route path="/video/:id" element={<VideoWatchPage />} />
 
-        {/* News Page */}
         <Route path="/news" element={<NewsPage />} />
 
-        {/* Search Results */}
         <Route path="/search" element={<SearchResultsPage />} />
 
-        {/* Settings Page */}
         <Route path="/settings" element={<SettingsPage />} />
       </Routes>
     </Router>
