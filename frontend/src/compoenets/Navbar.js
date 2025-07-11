@@ -46,7 +46,7 @@ function Navbar() {
 
             <div className="navbar-search">
                 <input type="text" placeholder="Search" style={{ padding: "5px" }} />
-                <button style={{ marginLeft: "5px", padding: "5px 10px" }}>Search</button>
+                <button className="btn btn-primary" style={{ marginLeft: "5px", padding: "5px 10px" }}>Search</button>
             </div>
 
             <div className="navbar-actions" style={{
@@ -54,12 +54,12 @@ function Navbar() {
                 alignItems: "center",
                 gap: "15px"
             }}>
-                <button onClick={() => navigate("/upload")}>Upload Video</button>
+                <button className="btn btn-primary" onClick={() => navigate("/upload")}>Upload Video</button>
 
                 {user ? (
                     <div className="dropdown" style={{ position: "relative" }}>
                         <img
-                            src={user.logo}
+                            src={user.logo ? user.logo : "profilePicture.png"}
                             alt="Profile"
                             className="profile-logo"
                             style={{
@@ -78,7 +78,7 @@ function Navbar() {
                         </div>
                     </div>
                 ) : (
-                    <button onClick={() => navigate("/login")}>Login/Register</button>
+                    <button className="btn btn-primary" onClick={() => navigate("/login")}>Login/Register</button>
                 )}
             </div>
 

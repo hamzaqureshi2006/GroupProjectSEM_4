@@ -57,6 +57,17 @@ const loginUser = async (req, res) => {
   }
 };
 
+// POST /logout
+const logoutUser = (req, res) => {
+  res.clearCookie('token', {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax'
+  });
+  res.json({ message: 'Logged out successfully' });
+};
+
+
 const getUserDetails = async (req, res) => {
   try {
     const user = await User.findById(req.userId);
@@ -109,6 +120,7 @@ const subscribeUser = async (req, res) => {
 module.exports = {
   registerUser,
   loginUser,
+  logoutUser,
   getUserDetails,
   subscribeUser
 };

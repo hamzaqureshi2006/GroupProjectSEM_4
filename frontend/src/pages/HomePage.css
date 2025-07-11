@@ -22,6 +22,10 @@ html,
     color: white;
 }
 
+.navbar-brand:hover {
+    color: white;
+}
+
 .navbar-search input {
     padding: 5px;
     margin-right: 5px;

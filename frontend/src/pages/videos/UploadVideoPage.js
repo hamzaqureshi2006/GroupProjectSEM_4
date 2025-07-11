@@ -54,13 +54,19 @@ function UploadVideoPage() {
 
                 <div className="mb-3">
                     <label>Category</label>
-                    <input
-                        type="text"
+                    <select
                         className="form-control"
                         value={category}
                         onChange={(e) => setCategory(e.target.value)}
                         required
-                    />
+                    >
+                        <option value="Other">Select a category</option>
+                        <option value="Music">Music</option>
+                        <option value="Education">Education</option>
+                        <option value="Gaming">Gaming</option>
+                        <option value="Vlog">Vlog</option>
+                        <option value="Other">Other</option>
+                    </select>
                 </div>
 
                 <div className="mb-3">
