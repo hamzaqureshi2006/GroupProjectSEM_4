@@ -23,7 +23,6 @@ router.post('/logout', authenticate, logoutUser);
 // GET /api/users/me
 router.get('/me', authenticate, getUserDetails);
 
-
 // POST /api/users/:id/subscribe
 router.post('/subscribe', authenticate, subscribeUser);
 

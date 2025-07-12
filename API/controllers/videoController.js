@@ -1,10 +1,10 @@
 const Video = require('../models/Video');
-
+const ffmpeg = require('fluent-ffmpeg');
 
 const uploadVideoController = async (req, res) => {
   console.log(JSON.stringify(req.files), JSON.stringify(req.body));
   try {
-    const { title, category, tags } = req.body;
+    const { title, category, tags, description } = req.body;
 
     // Get files from req.files
     const videoFile = req.files && req.files.video ? req.files.video[0] : null;
@@ -14,101 +14,37 @@ const uploadVideoController = async (req, res) => {
       return res.status(400).json({ message: 'Title, video, or thumbnail missing' });
     }
 
-    const newVideo = new Video({
-      user_id: req.userId, // or req.user.id if you use req.user
-      title,
-      video_url: videoFile.path,
-      thumbnail_url: thumbnailFile.path,
-      category,
-      tags: tags ? tags.split(',').map(tag => tag.trim()) : []
+    // Get duration using ffmpeg
+    ffmpeg.ffprobe(videoFile.path, async (err, metadata) => {
+      if (err) {
+        console.error("Error getting video metadata:", err);
+        return res.status(500).json({ message: "Error processing video file" });
+      }
+
+      const duration = metadata.format.duration; // duration in seconds
+      console.log("Video duration (sec):", duration);
+
+      const newVideo = new Video({
+        user_id: req.userId, // or req.user.id if you use req.user
+        title,
+        video_url: videoFile.path,
+        thumbnail_url: thumbnailFile.path,
+        category,
+        tags: tags ? tags.split(',').map(tag => tag.trim()) : [],
+        description,
+        duration
+      });
+
+      const savedVideo = await newVideo.save();
+      res.status(201).json(savedVideo);
     });
 
-    const savedVideo = await newVideo.save();
-    res.status(201).json(savedVideo);
   } catch (err) {
     console.error('Error uploading video:', err.message);
     res.status(500).json({ message: 'Server error while uploading video' });
   }
 };
 
-// View a video
-const viewVideo = async (req, res) => {
-  try {
-    const video = await Video.findById(req.params.id);
-    if (!video) return res.status(404).json({ message: 'Video not found' });
-
-    // Avoid double counting views by same user
-    if (!video.viewedBy.includes(req.user.id)) {
-      video.views += 1;
-      video.viewedBy.push(req.user.id);
-      await video.save();
-    }
-
-    res.status(200).json(video);
-  } catch (error) {
-    res.status(500).json({ message: 'Failed to view video', error: error.message });
-  }
-};
-
-// Like a video
-const likeVideo = async (req, res) => {
-  try {
-    const video = await Video.findById(req.params.id);
-    if (!video) return res.status(404).json({ message: 'Video not found' });
-
-    const userId = req.user.id;
-
-    if (video.likedBy.includes(userId)) {
-      // Unlike
-      video.likes -= 1;
-      video.likedBy.pull(userId);
-    } else {
-      // Like
-      video.likes += 1;
-      video.likedBy.push(userId);
-      // Remove dislike if it exists
-      if (video.dislikedBy.includes(userId)) {
-        video.dislikes -= 1;
-        video.dislikedBy.pull(userId);
-      }
-    }
-
-    await video.save();
-    res.status(200).json({ message: 'Like updated', likes: video.likes });
-  } catch (error) {
-    res.status(500).json({ message: 'Failed to like video', error: error.message });
-  }
-};
-
-// Dislike a video
-const dislikeVideo = async (req, res) => {
-  try {
-    const video = await Video.findById(req.params.id);
-    if (!video) return res.status(404).json({ message: 'Video not found' });
-
-    const userId = req.user.id;
-
-    if (video.dislikedBy.includes(userId)) {
-      // Remove dislike
-      video.dislikes -= 1;
-      video.dislikedBy.pull(userId);
-    } else {
-      // Add dislike
-      video.dislikes += 1;
-      video.dislikedBy.push(userId);
-      // Remove like if exists
-      if (video.likedBy.includes(userId)) {
-        video.likes -= 1;
-        video.likedBy.pull(userId);
-      }
-    }
-
-    await video.save();
-    res.status(200).json({ message: 'Dislike updated', dislikes: video.dislikes });
-  } catch (error) {
-    res.status(500).json({ message: 'Failed to dislike video', error: error.message });
-  }
-};
 
 // Delete a video (only if owner)
 const deleteVideo = async (req, res) => {
@@ -192,9 +128,9 @@ const searchVideos = async (req, res) => {
 
 module.exports = {
   uploadVideoController,
-  viewVideo,
-  likeVideo,
-  dislikeVideo,
+  // likeVideo,
+  // dislikeVideo,
+  // watchVideo,
   deleteVideo,
   getOwnVideos,
   searchVideos,

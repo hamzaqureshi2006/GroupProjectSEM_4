@@ -7,6 +7,9 @@ const userSchema = new mongoose.Schema({
   logo: { type: String }, // URL to profile image
   subscribers: { type: Number, default: 0 },
   subscribedChannels: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  watchedVideos: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Video' }],
+  likedVideos: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Video' }],
+  dislikedVideos: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Video' }],
   timestamp: { type: Date, default: Date.now }
 });
 

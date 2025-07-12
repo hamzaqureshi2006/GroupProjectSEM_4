@@ -6,6 +6,7 @@ function UploadVideoPage() {
     const [title, setTitle] = useState("");
     const [category, setCategory] = useState("");
     const [tags, setTags] = useState("");
+    const [description, setDescription] = useState("");
     const [videoFile, setVideoFile] = useState(null);
     const [thumbnailFile, setThumbnailFile] = useState(null);
     const navigate = useNavigate();
@@ -17,9 +18,9 @@ function UploadVideoPage() {
         formData.append("title", title);
         formData.append("category", category);
         formData.append("tags", tags);
+        formData.append("description", description);
         formData.append("video", videoFile);
         formData.append("thumbnail", thumbnailFile);
-
         try {
 
             const res = await axios.post("http://localhost:5000/api/videos/upload", formData, {
@@ -76,6 +77,16 @@ function UploadVideoPage() {
                         className="form-control"
                         value={tags}
                         onChange={(e) => setTags(e.target.value)}
+                    />
+                </div>
+
+                <div className="mb-3">
+                    <label>Description</label>
+                    <textarea
+                        className="form-control"
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        rows={4}
                     />
                 </div>
 

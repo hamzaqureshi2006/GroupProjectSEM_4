@@ -34,7 +34,7 @@ function App() {
         {/* Video Pages*/}
         <Route path="/search" element={<SearchResultsPage />} />
         <Route path="/upload" element={<UploadVideoPage />} />
-        <Route path="/video/:id" element={<VideoWatchPage />} />
+        <Route path="/watch" element={<VideoWatchPage />} />
         <Route path="/liked" element={<LikedVideosPages />} />
         <Route path="/watchHistory" element={<WatchHistoryPage />} />
 

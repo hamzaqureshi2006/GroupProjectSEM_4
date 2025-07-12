@@ -3,7 +3,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import Navbar from "../../compoenets/Navbar";
 import Sidebar from "../../compoenets/Sidebar";
 import axios from "axios";
-import "bootstrap/dist/css/bootstrap.min.css";
 
 function SearchResultsPage() {
     const location = useLocation();
@@ -51,10 +50,10 @@ function SearchResultsPage() {
                                     key={video._id}
                                     className="list-group-item list-group-item-action"
                                     style={{ cursor: "pointer" }}
-                                    onClick={() => navigate(`/watch/${video._id}`)}
+                                    onClick={() => navigate(`/watch?video_id=${video._id}`)}
                                 >
                                     <div className="row">
-                                        <div className="col-md-4">
+                                        <div className="col-md-4 bg-dark">
                                             <img
                                                 src={video.thumbnail_url}
                                                 alt={video.title}
@@ -62,7 +61,7 @@ function SearchResultsPage() {
                                                 style={{
                                                     width: "100%",        // takes full width of its container
                                                     height: "180px",      // fixed height for consistency
-                                                    objectFit: "cover"    // crops neatly without distortion
+                                                    objectFit: "contain"    // crops neatly without distortion
                                                 }}
                                             />
                                         </div>
