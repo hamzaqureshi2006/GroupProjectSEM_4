@@ -5,6 +5,7 @@ const authenticate = (req, res, next) => {
   const token = req.cookies?.token;
   if (!token) {
     return res.status(401).json({ message: 'No token provided' });
+    console.error('No token provided in request');
   }
 
   try {
@@ -13,6 +14,7 @@ const authenticate = (req, res, next) => {
     next();
   } catch (err) {
     return res.status(401).json({ message: 'Invalid or expired token' });
+    console.error('Invalid or expired token:', err.message);
   }
 };
 

@@ -5,6 +5,86 @@ import Navbar from '../../compoenets/Navbar';
 import Sidebar from '../../compoenets/Sidebar';
 import axios from 'axios';
 
+/* Increase views count
+
+Increment views in Video collection.
+
+Append video _id to user's watchedVideos if not already present.
+
+Like a video
+
+Toggle like: if already liked, remove like; else add like.
+
+Remove dislike if the user had disliked before.
+
+Dislike a video
+
+Toggle dislike: if already disliked, remove dislike; else add dislike.
+
+Remove like if the user had liked before.
+
+Comment on video
+
+Create a comment document with video_id, user_id, and commentText.
+
+Push its _id to the video’s comments array.
+
+Nested comment (reply to comment)
+
+Create a reply comment.
+
+Push its _id to the parent comment’s replies array.
+
+Like a comment
+
+Toggle like similar to videos.
+
+Future sorting of comments based on likes + timestamp for “Top Comments”.
+
+Subscribe to channel
+
+User can subscribe or unsubscribe to the video uploader’s channel.
+
+Save to playlist / Watch later
+
+Allow users to save videos to their custom playlists or watch later.
+
+Share video
+
+Generate shareable link with easy copy to clipboard.
+
+Report video or comment
+
+For inappropriate content, add report API to flag videos or comments.
+
+Show recommended videos
+
+Based on tags, category, or viewing history.
+
+Full-screen and playback speed controls
+
+Already provided by <video> tag controls, but can be customised for advanced features.
+
+Show video description, tags, upload time, channel name
+
+Styled below video player.
+
+Show like/dislike count in UI
+
+Toggle immediately on click for responsiveness.
+
+Show number of views
+
+Display near title or below video for engagement.
+
+Enable keyboard shortcuts
+
+Space for pause/play, left-right arrow for seek, up-down arrow for volume.
+
+Comments sorting options
+
+Newest, Top Comments. */
+
 function VideoWatchPage() {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
@@ -12,6 +92,7 @@ function VideoWatchPage() {
 
     const [isLiked, setIsLiked] = useState(false);
     const [isDisliked, setIsDisliked] = useState(false);
+    const [isSubscribed, setIsSubscribed] = useState(false);
 
     const [video, setVideo] = useState(null);
 
@@ -33,6 +114,7 @@ function VideoWatchPage() {
 
                 setIsLiked(res.data.isLiked);
                 setIsDisliked(res.data.isDisliked);
+                setIsSubscribed(res.data.isSubscribed);
 
                 const commentsRes = await axios.get(`http://localhost:5000/api/comments/${video_id}`);
                 setComments(commentsRes.data);
@@ -110,11 +192,12 @@ function VideoWatchPage() {
                                             <small className="text-muted">{uploader.subscribers}</small>
                                         </div>
                                     </div>
-                                    <button className="btn btn-danger"
+                                    <button className={`btn ${isSubscribed ? 'btn-dark' : 'btn-danger'}`}
                                         onClick={() => {
-                                            axios.post('http://localhost:5000/api/users/subscribe', { targetUserId: uploader.user_id }, { withCredentials: true })
-                                                .then(res => { console.log(res) })
+                                            axios.get(`http://localhost:5000/api/users/toggleSubscribe/${uploader._id}`, { withCredentials: true })
+                                                .then(res => { setUploader(res.data.targetUser) })
                                                 .catch(err => { console.error(err) });
+                                            setIsSubscribed(!isSubscribed); // Toggle subscription state
                                         }
                                         }
                                     >

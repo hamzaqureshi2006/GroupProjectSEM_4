@@ -32,7 +32,7 @@ const getCommentsForVideo = async (req, res) => {
     try {
         const video = await Video.findById(req.params.videoId);
         const comments = await Comment.find({ _id: { $in: video.comments } })
-            .populate('user_id', 'channelName');
+            .populate('user_id', 'channelName logo');
 
         res.json(comments);
     } catch (err) {

@@ -96,9 +96,11 @@ const getUserDetailsById = async (req, res) => {
 
 
 // POST /:id/subscribe
-const subscribeUser = async (req, res) => {
+const toggleSubscribeUser = async (req, res) => {
+  console.log("Subscribe API is called");
   const currentUserId = req.userId; // send in request body
-  const targetUserId = req.body.targetUserId;
+  const targetUserId = req.params.id;
+  console.log("Subscribe request body:", targetUserId, "Current user ID:", currentUserId);
 
   try {
     if (currentUserId === targetUserId) {
@@ -114,7 +116,13 @@ const subscribeUser = async (req, res) => {
 
     // Prevent duplicate subscription
     if (currentUser.subscribedChannels.includes(targetUserId)) {
-      return res.status(400).json({ message: 'Already subscribed' });
+      currentUser.subscribedChannels = currentUser.subscribedChannels.filter(id => id.toString() !== targetUserId);
+      targetUser.subscribers -= 1;
+      await currentUser.save();
+      await targetUser.save();
+      console.log(`User ${currentUser.channelName} unsubscribed from ${targetUser.channelName}`);
+      console.log("Unsubscribed successfully");
+      return res.json({ currentUser, targetUser });
     }
 
     currentUser.subscribedChannels.push(targetUserId);
@@ -123,7 +131,9 @@ const subscribeUser = async (req, res) => {
     await currentUser.save();
     await targetUser.save();
 
-    res.json({ message: 'Subscribed successfully' });
+    console.log(`User ${currentUser.channelName} subscribed to ${targetUser.channelName}`);
+
+    res.json({ currentUser, targetUser });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -135,5 +145,5 @@ module.exports = {
   logoutUser,
   getUserDetails,
   getUserDetailsById,
-  subscribeUser
+  toggleSubscribeUser
 };

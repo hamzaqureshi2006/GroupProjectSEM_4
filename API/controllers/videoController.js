@@ -85,11 +85,16 @@ const getVideoById = async (req, res) => {
     const user = await User.findById(req.userId);
     let isLiked = false;
     let isDisliked = false
+    let isSubscribed = false;
     if (user) {
       isLiked = user.likedVideos.some(v => v.toString() === video._id.toString());
       isDisliked = user.dislikedVideos.some(v => v.toString() === video._id.toString());
+      isSubscribed = user.subscribedChannels.some(subscribedChannel_id => subscribedChannel_id.toString() === video.user_id._id.toString());
     }
-    res.status(200).json({ ...video.toObject(), isLiked, isDisliked });
+    console.log("Video details:", video);
+    console.log("User details:", user);
+    console.log("isLiked:", isLiked, "isDisliked:", isDisliked, "isSubscribed:", isSubscribed);
+    res.status(200).json({ ...video.toObject(), isLiked, isDisliked, isSubscribed });
   } catch (error) {
     res.status(500).json({ message: 'Failed to get video', error: error.message });
   }
