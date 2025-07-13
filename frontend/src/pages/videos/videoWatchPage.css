@@ -1,0 +1,9 @@
+.video-actions button {
+    border: none;
+    background: none;
+    font-size: 14px;
+}
+
+.video-actions button:hover {
+    background-color: #eee;
+}

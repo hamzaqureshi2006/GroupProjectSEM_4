@@ -9,6 +9,7 @@ const {
   loginUser,
   logoutUser,
   getUserDetails,
+  getUserDetailsById,
   subscribeUser
 } = require('../controllers/userController');
 
@@ -23,6 +24,9 @@ router.post('/logout', authenticate, logoutUser);
 
 // GET /api/users/me
 router.get('/me', authenticate, getUserDetails);
+
+// GET /api/users/getUserDetailsById/:id
+router.get('/getUserDetailsById/:id', authenticate, getUserDetailsById);
 
 // POST /api/users/:id/subscribe
 router.post('/subscribe', authenticate, subscribeUser);

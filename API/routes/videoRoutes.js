@@ -7,6 +7,8 @@ const authenticate = require('../middleware/authenticate');
 const {
   uploadVideoController,
   deleteVideo,
+  toggledislikeVideo,
+  togglelikeVideo,
   getOwnVideos,
   getVideoById,
   searchVideos
@@ -32,10 +34,16 @@ router.delete('/:id', authenticate, deleteVideo);
 router.get('/user/:id', authenticate, getOwnVideos);
 
 // Get a single video by ID
-router.get('/getVideo/:id', getVideoById);
+router.get('/getVideo/:id', authenticate, getVideoById);
 
 // Search videos by title or tags
 router.post('/search', searchVideos);
+
+// Like a video
+router.post('/togglelike/:id', authenticate, togglelikeVideo);
+
+// Dislike a video
+router.post('/toggledislike/:id', authenticate, toggledislikeVideo);
 
 module.exports = router;
 

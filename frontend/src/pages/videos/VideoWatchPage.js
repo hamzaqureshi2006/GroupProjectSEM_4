@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import './videoWatchPage.css'; // Assuming you have some styles for this page
 import Navbar from '../../compoenets/Navbar';
 import Sidebar from '../../compoenets/Sidebar';
 import axios from 'axios';
@@ -9,10 +10,17 @@ function VideoWatchPage() {
     const queryParams = new URLSearchParams(location.search);
     const video_id = queryParams.get("video_id");
 
+    const [isLiked, setIsLiked] = useState(false);
+    const [isDisliked, setIsDisliked] = useState(false);
+
     const [video, setVideo] = useState(null);
-    const [loading, setLoading] = useState(true);
+
+    const [uploader, setUploader] = useState(null);
+
     const [comments, setComments] = useState([]);
     const [commentInput, setCommentInput] = useState("");
+
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchVideo = async () => {
@@ -21,9 +29,15 @@ function VideoWatchPage() {
                     withCredentials: true
                 });
                 setVideo(res.data);
+                console.log(res.data);
+
+                setIsLiked(res.data.isLiked);
+                setIsDisliked(res.data.isDisliked);
 
                 const commentsRes = await axios.get(`http://localhost:5000/api/comments/${video_id}`);
                 setComments(commentsRes.data);
+
+                setUploader(res.data.user_id);
 
                 setLoading(false);
             } catch (err) {
@@ -65,36 +79,88 @@ function VideoWatchPage() {
                     <div className="col-md-2 p-0">
                         <Sidebar />
                     </div>
+
                     <div className="col-md-10 mt-3">
                         <div className="row">
                             <div className="col-md-8">
+
+                                {/* Video Player */}
                                 <div className="embed-responsive embed-responsive-16by9">
                                     <video
                                         controls
-                                        src={`${video.video_url}`}
+                                        src={video.video_url}
                                         className="embed-responsive-item"
-                                        style={{ width: "100%" }}
+                                        style={{ width: "100%", borderRadius: "10px" }}
                                     />
                                 </div>
-                                <h3 className="mt-3">{video.title}</h3>
-                                <p>{video.description}</p>
+
+                                {/* Video Title */}
+                                <h4 className="mt-3 fw-bold">{video.title}</h4>
+
+                                {/* Uploader Section */}
+                                <div className="d-flex align-items-center justify-content-between mt-2 mb-3">
+                                    <div className="d-flex align-items-center">
+                                        <img
+                                            src={video.user_id.logo || "/profilePicture.png"}
+                                            alt="Channel Logo"
+                                            style={{ width: "50px", height: "50px", borderRadius: "50%", marginRight: "10px" }}
+                                        />
+                                        <div>
+                                            <div style={{ fontWeight: "bold" }}>{uploader.channelName || "Uploader"}</div>
+                                            <small className="text-muted">{uploader.subscribers}</small>
+                                        </div>
+                                    </div>
+                                    <button className="btn btn-danger"
+                                        onClick={() => {
+                                            axios.post('http://localhost:5000/api/users/subscribe', { targetUserId: uploader.user_id }, { withCredentials: true })
+                                                .then(res => { console.log(res) })
+                                                .catch(err => { console.error(err) });
+                                        }
+                                        }
+                                    >
+                                        Subscribe
+                                    </button>
+                                </div>
+
+                                {/* Actions Row */}
+                                <div className="d-flex align-items-center mb-3" style={{ gap: "10px" }}>
+                                    <button className={`btn ${isLiked ? 'btn-success' : 'btn-light'}`} onClick={() => {
+                                        axios.post(`http://localhost:5000/api/videos/togglelike/${video_id}`, {}, { withCredentials: true })
+                                            .then(res => { console.log(res) })
+                                            .catch(err => { console.error(err) });
+                                        setIsLiked(!isLiked);//api changes data base and this changes the state to reflect that 
+                                    }}>👍 Like</button>
+                                    <button className={`btn ${isDisliked ? 'btn-danger' : 'btn-light'}`} onClick={() => {
+                                        axios.post(`http://localhost:5000/api/videos/toggledislike/${video_id}`, {}, { withCredentials: true })
+                                            .then(res => { console.log(res) })
+                                            .catch(err => { console.error(err) });
+                                        setIsDisliked(!isDisliked);
+                                    }}>👎 Dislike</button>
+                                    <button className="btn btn-light">🔗 Share</button>
+                                    <button className="btn btn-light">💾 Save</button>
+                                </div>
+
+                                {/* Views and Upload Date */}
                                 <p>
                                     <small className="text-muted">
                                         {video.views} views • {new Date(video.timestamp).toLocaleDateString()}
                                     </small>
                                 </p>
-                                <div>
-                                    {video.tags && video.tags.map((tag, index) => (
-                                        <span key={index} className="badge bg-secondary me-2">{tag}</span>
-                                    ))}
+
+                                {/* Description Box */}
+                                <div className="p-3" style={{ backgroundColor: "#f2f2f2", borderRadius: "8px" }}>
+                                    <p>{video.description}</p>
+                                    <div>
+                                        {video.tags && video.tags.map((tag, index) => (
+                                            <span key={index} className="badge bg-secondary me-2">{tag}</span>
+                                        ))}
+                                    </div>
                                 </div>
 
+                                {/* Comments Section */}
+                                <h5 className="mt-4">Comments</h5>
 
-
-                                {/* This is Comment Section */}
-
-                                <h4>Comments</h4>
-
+                                {/* Comment Input */}
                                 <form onSubmit={handleCommentSubmit} className="mb-3">
                                     <div className="input-group">
                                         <input
@@ -104,50 +170,49 @@ function VideoWatchPage() {
                                             value={commentInput}
                                             onChange={(e) => setCommentInput(e.target.value)}
                                         />
-                                        <button className="btn btn-primary" type="submit">Comment</button>
+                                        <button className="p-2 btn btn-primary" type="submit">Comment</button>
                                     </div>
                                 </form>
 
-                                <ul className="list-group">
+                                {/* Comments List */}
+                                <div className='py-4' style={{ maxHeight: "400px", overflowY: "auto" }}>
                                     {comments.map(comment => (
-                                        <div key={comment._id} style={{ display: 'flex', marginBottom: '15px' }}>
+                                        <div key={comment._id} className="d-flex mb-3">
                                             <img
-                                                src={comment.user_id.logo || 'profilePicture.png'}
+                                                src={comment.user_id.logo || '/profilePicture.png'}
                                                 alt={comment.user_id.channelName}
                                                 style={{ width: '40px', height: '40px', borderRadius: '50%', marginRight: '10px' }}
                                             />
                                             <div>
-                                                <div style={{ fontWeight: 'bold' }}>
+                                                <div className="fw-bold">
                                                     @{comment.user_id.channelName}
-                                                    <span style={{ marginLeft: '5px', color: 'gray', fontSize: '12px' }}>
+                                                    <span className="ms-2 text-muted" style={{ fontSize: '12px' }}>
                                                         {new Date(comment.timestamp).toLocaleDateString()}
                                                     </span>
                                                 </div>
                                                 <div>{comment.commentText}</div>
-                                                <div style={{ display: 'flex', gap: '10px', marginTop: '5px' }}>
-                                                    <button className='btn btn-success'>👍 {comment.likes}</button>
-                                                    <button className='btn btn-danger'>👎 {comment.dislikes}</button>
-                                                    <button className='btn btn-info'>Reply</button>
+                                                <div className="d-flex mt-1" style={{ gap: '10px' }}>
+                                                    <button className='btn btn-light'>👍 {comment.likes}</button>
+                                                    <button className='btn btn-light'>👎 {comment.dislikes}</button>
+                                                    <button className='btn btn-light'>Reply</button>
                                                 </div>
                                             </div>
                                         </div>
                                     ))}
-                                </ul>
-
-                                {/* End of Comment Section */}
-
-
+                                </div>
                             </div>
 
+                            {/* Recommended Videos Sidebar */}
                             <div className="col-md-4">
                                 <h5>Recommended Videos</h5>
-                                {/* Optionally render recommendations here */}
+                                {/* Future: map recommended videos here */}
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </>
+
     );
 }
 

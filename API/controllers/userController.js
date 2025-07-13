@@ -83,6 +83,18 @@ const getUserDetails = async (req, res) => {
   }
 }
 
+const getUserDetailsById = async (req, res) => {
+  const userId = req.params.id;
+  try {
+    const user = await User.findById(userId)
+    if (!user) return res.status(404).json({ message: "User not found" });
+    res.json(user);
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+}
+
+
 // POST /:id/subscribe
 const subscribeUser = async (req, res) => {
   const currentUserId = req.userId; // send in request body
@@ -122,5 +134,6 @@ module.exports = {
   loginUser,
   logoutUser,
   getUserDetails,
+  getUserDetailsById,
   subscribeUser
 };
