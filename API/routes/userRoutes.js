@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
+
+
 const authenticate = require('../middleware/authenticate'); // assuming you have JWT middleware
 const upload = require('../middleware/multer');
-
 const {
   registerUser,
   loginUser,
