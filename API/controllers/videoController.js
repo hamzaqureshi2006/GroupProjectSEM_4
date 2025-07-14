@@ -76,13 +76,23 @@ const getOwnVideos = async (req, res) => {
 };
 
 // Get one video by ID
-const getVideoById = async (req, res) => {
+const watchVideo = async (req, res) => {
   console.log("Getting video by ID:", req.params.id);
+  const userId = req.userId;
   try {
     const video = await Video.findById(req.params.id).populate('user_id', 'channelName logo subscribers');
+    const user = await User.findById(userId);
     if (!video) return res.status(404).json({ message: 'Video not found' });
+
+    // Increment views only if the user has not watched this video before
+    if (user && !user.watchedVideos.includes(video._id)) {
+      video.views += 1;
+      user.watchedVideos.push(video._id);
+      await user.save();
+      await video.save();
+    }
+
     // check has user liked or disliked this video
-    const user = await User.findById(req.userId);
     let isLiked = false;
     let isDisliked = false
     let isSubscribed = false;
@@ -203,14 +213,37 @@ const toggledislikeVideo = async (req, res) => {
   }
 };
 
+const getLikedVideos = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const user = await User.findById(userId).populate('likedVideos');
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    res.json(user.likedVideos);
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+const getWatchedVideos = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const user = await User.findById(userId).populate('watchedVideos');
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    res.json(user.watchedVideos);
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 module.exports = {
   uploadVideoController,
   togglelikeVideo,
   toggledislikeVideo,
-  // watchVideo,
+  watchVideo,
   deleteVideo,
   getOwnVideos,
   searchVideos,
-  getVideoById,
+  getLikedVideos,
+  getWatchedVideos
 };
 

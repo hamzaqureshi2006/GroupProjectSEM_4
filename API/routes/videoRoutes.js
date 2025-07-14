@@ -10,7 +10,9 @@ const {
   toggledislikeVideo,
   togglelikeVideo,
   getOwnVideos,
-  getVideoById,
+  watchVideo,
+  getLikedVideos,
+  getWatchedVideos,
   searchVideos
 } = require('../controllers/videoController');
 
@@ -34,7 +36,7 @@ router.delete('/:id', authenticate, deleteVideo);
 router.get('/user/:id', authenticate, getOwnVideos);
 
 // Get a single video by ID
-router.get('/getVideo/:id', authenticate, getVideoById);
+router.get('/watchVideo/:id', authenticate, watchVideo);
 
 // Search videos by title or tags
 router.post('/search', searchVideos);
@@ -44,6 +46,12 @@ router.post('/togglelike/:id', authenticate, togglelikeVideo);
 
 // Dislike a video
 router.post('/toggledislike/:id', authenticate, toggledislikeVideo);
+
+// Get liked videos of the authenticated user
+router.get('/likedVideos', authenticate, getLikedVideos);
+
+// Get watched videos of the authenticated user
+router.get('/watchedVideos', authenticate, getWatchedVideos);
 
 module.exports = router;
 

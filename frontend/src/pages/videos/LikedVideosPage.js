@@ -16,7 +16,7 @@ function LikedVideosPage() {
     useEffect(() => {
         const fetchResults = async () => {
             try {
-                const res = await axios.get("http://localhost:5000/api/videos/watchedVideos", { withCredentials: true });
+                const res = await axios.get("http://localhost:5000/api/videos/likedVideos", { withCredentials: true });
                 setVideos(res.data);
             } catch (err) {
                 console.error("Error fetching search results:", err);
@@ -39,7 +39,7 @@ function LikedVideosPage() {
                     {loading ? (
                         <p>Loading...</p>
                     ) : videos.length === 0 ? (
-                        <p>There are no Watched Videos.</p>
+                        <p>There are no Liked Videos.</p>
                     ) : (
                         <div className="list-group">
                             {videos.map(video => (

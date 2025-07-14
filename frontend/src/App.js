@@ -12,8 +12,9 @@ import NewsPage from "./pages/news/NewsPage";
 import UploadVideoPage from "./pages/videos/UploadVideoPage";
 import VideoWatchPage from "./pages/videos/VideoWatchPage";
 import SearchResultsPage from "./pages/videos/SearchResultsPage";
-import LikedVideosPages from "./pages/videos/LikedVideosPages";
+import LikedVideosPages from "./pages/videos/LikedVideosPage";
 import WatchHistoryPage from "./pages/videos/WatchHistoryPage";
+import SubscribedChannelsPage from "./pages/subscribedChannels/subscribedChannelsPage";
 
 function App() {
   return (
@@ -37,6 +38,12 @@ function App() {
         <Route path="/watch" element={<VideoWatchPage />} />
         <Route path="/liked" element={<LikedVideosPages />} />
         <Route path="/watchHistory" element={<WatchHistoryPage />} />
+
+        {/* subscribed Channels */}
+        <Route path="/subscribedChannels" element={<SubscribedChannelsPage />} />
+
+        {/* Catch-all route for 404 */}
+        <Route path="*" element={<h1>404 Not Found</h1>} />
 
         {/* News Page */}
         <Route path="/news" element={<NewsPage />} />

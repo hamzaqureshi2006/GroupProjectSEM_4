@@ -5,45 +5,34 @@ import Navbar from '../../compoenets/Navbar';
 import Sidebar from '../../compoenets/Sidebar';
 import axios from 'axios';
 
-/* Increase views count
+/* 
+Increase views count  
 
 Increment views in Video collection.
 
 Append video _id to user's watchedVideos if not already present.
 
-Like a video
+Like a video ✅
 
-Toggle like: if already liked, remove like; else add like.
+Toggle like: if already liked, remove like.✅
 
-Remove dislike if the user had disliked before.
+Dislike a video✅
 
-Dislike a video
+Toggle dislike: if already disliked, remove dislike.✅
 
-Toggle dislike: if already disliked, remove dislike; else add dislike.
+Comment on video ✅
 
-Remove like if the user had liked before.
-
-Comment on video
-
-Create a comment document with video_id, user_id, and commentText.
-
-Push its _id to the video’s comments array.
+Create a comment document with video_id, user_id, and commentText. ✅
 
 Nested comment (reply to comment)
 
-Create a reply comment.
-
-Push its _id to the parent comment’s replies array.
-
 Like a comment
-
-Toggle like similar to videos.
 
 Future sorting of comments based on likes + timestamp for “Top Comments”.
 
-Subscribe to channel
+Subscribe to channel ✅
 
-User can subscribe or unsubscribe to the video uploader’s channel.
+User can subscribe or unsubscribe to the video uploader’s channel.✅
 
 Save to playlist / Watch later
 
@@ -51,39 +40,22 @@ Allow users to save videos to their custom playlists or watch later.
 
 Share video
 
-Generate shareable link with easy copy to clipboard.
-
 Report video or comment
 
 For inappropriate content, add report API to flag videos or comments.
 
 Show recommended videos
 
-Based on tags, category, or viewing history.
-
-Full-screen and playback speed controls
-
 Already provided by <video> tag controls, but can be customised for advanced features.
 
-Show video description, tags, upload time, channel name
+Show video description, tags, upload time, channel name ✅
 
-Styled below video player.
+Toggle immediately on click for responsiveness. ✅
 
-Show like/dislike count in UI
-
-Toggle immediately on click for responsiveness.
-
-Show number of views
-
-Display near title or below video for engagement.
-
-Enable keyboard shortcuts
+Show number of views✅
 
 Space for pause/play, left-right arrow for seek, up-down arrow for volume.
-
-Comments sorting options
-
-Newest, Top Comments. */
+ */
 
 function VideoWatchPage() {
     const location = useLocation();
@@ -106,7 +78,7 @@ function VideoWatchPage() {
     useEffect(() => {
         const fetchVideo = async () => {
             try {
-                const res = await axios.get(`http://localhost:5000/api/videos/getVideo/${video_id}`, {
+                const res = await axios.get(`http://localhost:5000/api/videos/watchVideo/${video_id}`, {
                     withCredentials: true
                 });
                 setVideo(res.data);
@@ -115,11 +87,10 @@ function VideoWatchPage() {
                 setIsLiked(res.data.isLiked);
                 setIsDisliked(res.data.isDisliked);
                 setIsSubscribed(res.data.isSubscribed);
+                setUploader(res.data.user_id);
 
                 const commentsRes = await axios.get(`http://localhost:5000/api/comments/${video_id}`);
                 setComments(commentsRes.data);
-
-                setUploader(res.data.user_id);
 
                 setLoading(false);
             } catch (err) {
@@ -185,7 +156,7 @@ function VideoWatchPage() {
                                         <img
                                             src={video.user_id.logo || "/profilePicture.png"}
                                             alt="Channel Logo"
-                                            style={{ width: "50px", height: "50px", borderRadius: "50%", marginRight: "10px" }}
+                                            style={{ width: "50px", height: "50px", borderRadius: "50%", marginRight: "10px", objectFit: "cover" }}
                                         />
                                         <div>
                                             <div style={{ fontWeight: "bold" }}>{uploader.channelName || "Uploader"}</div>
@@ -197,7 +168,13 @@ function VideoWatchPage() {
                                             axios.get(`http://localhost:5000/api/users/toggleSubscribe/${uploader._id}`, { withCredentials: true })
                                                 .then(res => { setUploader(res.data.targetUser) })
                                                 .catch(err => { console.error(err) });
-                                            setIsSubscribed(!isSubscribed); // Toggle subscription state
+                                            if (uploader._id !== video.user_id._id) {
+                                                // Only toggle subscription if the uploader is not the current user
+                                                setIsSubscribed(!isSubscribed); // Toggle subscription state
+                                            }
+                                            else {
+                                                alert("You cannot subscribe to your own channel.");
+                                            }
                                         }
                                         }
                                     >
@@ -264,7 +241,7 @@ function VideoWatchPage() {
                                             <img
                                                 src={comment.user_id.logo || '/profilePicture.png'}
                                                 alt={comment.user_id.channelName}
-                                                style={{ width: '40px', height: '40px', borderRadius: '50%', marginRight: '10px' }}
+                                                style={{ width: '40px', height: '40px', borderRadius: '50%', marginRight: '10px', objectFit: "cover" }}
                                             />
                                             <div>
                                                 <div className="fw-bold">

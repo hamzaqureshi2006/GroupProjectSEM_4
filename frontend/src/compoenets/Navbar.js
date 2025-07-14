@@ -72,7 +72,8 @@ function Navbar() {
                                 width: "40px",
                                 height: "40px",
                                 borderRadius: "50%",
-                                cursor: "pointer"
+                                cursor: "pointer",
+                                objectFit: "cover"
                             }}
                             onClick={() => document.getElementById("profileDropdown").classList.toggle("show")}
                         />
