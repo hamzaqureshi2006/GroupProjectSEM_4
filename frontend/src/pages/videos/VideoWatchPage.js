@@ -69,6 +69,7 @@ function VideoWatchPage() {
     const [video, setVideo] = useState(null);
 
     const [uploader, setUploader] = useState(null);
+    const [ user , setUser ] = useState(null);
 
     const [comments, setComments] = useState([]);
     const [commentInput, setCommentInput] = useState("");
@@ -91,6 +92,9 @@ function VideoWatchPage() {
 
                 const commentsRes = await axios.get(`http://localhost:5000/api/comments/${video_id}`);
                 setComments(commentsRes.data);
+
+                const userRes = await axios.get("http://localhost:5000/api/users/me", { withCredentials: true });
+                setUser(userRes.data);
 
                 setLoading(false);
             } catch (err) {
@@ -168,7 +172,7 @@ function VideoWatchPage() {
                                             axios.get(`http://localhost:5000/api/users/toggleSubscribe/${uploader._id}`, { withCredentials: true })
                                                 .then(res => { setUploader(res.data.targetUser) })
                                                 .catch(err => { console.error(err) });
-                                            if (uploader._id !== video.user_id._id) {
+                                            if (uploader._id !== user._id) {
                                                 // Only toggle subscription if the uploader is not the current user
                                                 setIsSubscribed(!isSubscribed); // Toggle subscription state
                                             }

@@ -74,6 +74,7 @@ const getUserDetails = async (req, res) => {
     if (!user) return res.status(404).json({ message: "User not found" });
 
     res.json({
+      _id: user._id,
       channelName: user.channelName,
       email: user.email,
       logo: user.logo,
