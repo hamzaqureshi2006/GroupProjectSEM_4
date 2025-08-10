@@ -109,6 +109,8 @@ function VideoWatchPage() {
         e.preventDefault();
         if (!commentInput.trim()) return;
 
+        // please check spam comments here
+
         try {
             const res = await axios.post("http://localhost:5000/api/comments/add", {
                 videoId: video_id,
