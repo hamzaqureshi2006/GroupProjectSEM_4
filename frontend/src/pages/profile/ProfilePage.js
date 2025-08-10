@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import Navbar from "../../compoenets/Navbar";
+import Sidebar from "../../compoenets/Sidebar";
 
 function ProfilePage() {
     const [user, setUser] = useState(null);
@@ -23,37 +25,49 @@ function ProfilePage() {
 
     if (!user) {
         return (
-            <div className="container mt-5 text-center">
-                <h3>Please log in to see your profile.</h3>
+            <div className="homepage fade-in">
+                <Navbar />
+                <div className="content">
+                    <Sidebar />
+                    <div className="container mt-5 text-center">
+                        <h3>Please log in to see your profile.</h3>
+                    </div>
+                </div>
             </div>
         );
     }
 
     return (
-        <div className="container mt-5">
-            <div className="card mx-auto" style={{ maxWidth: "600px" }}>
-                <div className="card-body text-center">
-                    <img
-                        src={user.logo ? user.logo : "profilePicture.png"}
-                        alt="Profile"
-                        className="rounded-circle mb-3"
-                        style={{ width: "150px", height: "150px", objectFit: "cover" }}
-                    />
-                    <h3 className="card-title">{user.channelName}</h3>
-                    <p className="text-muted">{user.email}</p>
+        <div className="homepage fade-in">
+            <Navbar />
+            <div className="content">
+                <Sidebar />
+                <div className="container mt-5">
+                    <div className="card mx-auto glass shadow-soft" style={{ maxWidth: "600px" }}>
+                        <div className="card-body text-center">
+                            <img
+                                src={user.logo ? user.logo : "profilePicture.png"}
+                                alt="Profile"
+                                className="rounded-circle mb-3"
+                                style={{ width: "150px", height: "150px", objectFit: "cover" }}
+                            />
+                            <h3 className="card-title">{user.channelName}</h3>
+                            <p className="text-secondary">{user.email}</p>
 
-                    <div className="d-flex justify-content-around mt-4">
-                        <div>
-                            <h5>{user.subscribers || 0}</h5>
-                            <p className="text-muted">Subscribers</p>
-                        </div>
-                        <div>
-                            <h5>{new Date(user.timestamp).toLocaleDateString()}</h5>
-                            <p className="text-muted">Joined</p>
+                            <div className="d-flex justify-content-around mt-4">
+                                <div>
+                                    <h5>{user.subscribers || 0}</h5>
+                                    <p className="text-secondary">Subscribers</p>
+                                </div>
+                                <div>
+                                    <h5>{new Date(user.timestamp).toLocaleDateString()}</h5>
+                                    <p className="text-secondary">Joined</p>
+                                </div>
+                            </div>
+
+                            <button className="btn btn-primary mt-3">Edit Profile</button>
                         </div>
                     </div>
-
-                    <button className="btn btn-primary mt-3">Edit Profile</button>
                 </div>
             </div>
         </div>

@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Navbar from "../../compoenets/Navbar";
+import Sidebar from "../../compoenets/Sidebar";
 
 function UploadVideoPage() {
     const [title, setTitle] = useState("");
@@ -39,9 +41,13 @@ function UploadVideoPage() {
     };
 
     return (
-        <div className="container mt-5" style={{ maxWidth: "600px" }}>
-            <h2 className="mb-4">Upload Video</h2>
-            <form onSubmit={handleUpload}>
+        <div className="homepage fade-in">
+            <Navbar />
+            <div className="content">
+                <Sidebar />
+                <div className="container mt-5" style={{ maxWidth: "600px" }}>
+                    <h2 className="mb-4">Upload Video</h2>
+                    <form onSubmit={handleUpload}>
                 <div className="mb-3">
                     <label>Title</label>
                     <input
@@ -112,10 +118,12 @@ function UploadVideoPage() {
                     />
                 </div>
 
-                <button type="submit" className="btn btn-primary w-100">
-                    Upload Video
-                </button>
-            </form>
+                        <button type="submit" className="btn btn-primary w-100">
+                            Upload Video
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
     );
 }

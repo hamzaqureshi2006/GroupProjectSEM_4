@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
+import Navbar from "../../compoenets/Navbar";
+import Sidebar from "../../compoenets/Sidebar";
 
 function RegisterPage() {
     const [channelName, setChannelName] = useState("");
@@ -34,9 +36,13 @@ function RegisterPage() {
     };
 
     return (
-        <div className="container mt-5" style={{ maxWidth: "400px" }}>
-            <h2 className="mb-4">Register</h2>
-            <form onSubmit={handleRegister}>
+        <div className="homepage fade-in">
+            <Navbar />
+            <div className="content">
+                <Sidebar />
+                <div className="container mt-5" style={{ maxWidth: "400px" }}>
+                    <h2 className="mb-4">Register</h2>
+                    <form onSubmit={handleRegister}>
                 <div className="mb-3">
                     <label>channelName</label>
                     <input
@@ -80,16 +86,18 @@ function RegisterPage() {
                     />
                 </div>
 
-                <button type="submit" className="btn btn-primary w-100">
-                    Register
-                </button>
-            </form>
+                        <button type="submit" className="btn btn-primary w-100">
+                            Register
+                        </button>
+                    </form>
 
-            <div className="mt-3 text-center">
-                <p>Already have an account?</p>
-                <Link to="/login" className="btn btn-secondary">
-                    Login
-                </Link>
+                    <div className="mt-3 text-center">
+                        <p>Already have an account?</p>
+                        <Link to="/login" className="btn btn-secondary">
+                            Login
+                        </Link>
+                    </div>
+                </div>
             </div>
         </div>
     );

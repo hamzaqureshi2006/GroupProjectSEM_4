@@ -15,6 +15,8 @@ import SearchResultsPage from "./pages/videos/SearchResultsPage";
 import LikedVideosPages from "./pages/videos/LikedVideosPage";
 import WatchHistoryPage from "./pages/videos/WatchHistoryPage";
 import SubscribedChannelsPage from "./pages/subscribedChannels/subscribedChannelsPage";
+import AboutPage from "./pages/AboutPage";
+import ContactPage from "./pages/ContactPage";
 
 function App() {
   return (
@@ -47,6 +49,10 @@ function App() {
 
         {/* News Page */}
         <Route path="/news" element={<NewsPage />} />
+
+        {/* Static Pages */}
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/contact" element={<ContactPage />} />
 
 
       </Routes>

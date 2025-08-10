@@ -16,32 +16,20 @@ function HomePage() {
     }));
 
     return (
-        <div className="homepage">
-            {/* Navbar */}
+        <div className="homepage fade-in">
             <Navbar />
-
             <div className="content">
-                {/* Sidebar */}
                 <Sidebar />
-
-
-                {/* Video Feed */}
                 <div className="col-md-10 p-5">
                     <div className="row">
                         {videos.map(video => (
                             <div key={video.id} className="col-md-4 mb-4">
                                 <div className="card">
-                                    <img
-                                        src={video.thumbnail}
-                                        className="card-img-top"
-                                        alt={video.title}
-                                    />
+                                    <div className="skeleton skeleton-thumb" />
                                     <div className="card-body">
-                                        <h5 className="card-title">{video.title}</h5>
-                                        <p className="card-text">{video.creator}</p>
-                                        <p className="card-text">{video.views} views</p>
-                                        <p className="card-text">{video.time}</p>
-                                        <button className="btn btn-primary w-100">Watch</button>
+                                        <div className="skeleton skeleton-text" style={{ width: "75%" }} />
+                                        <div className="skeleton skeleton-text" style={{ width: "40%" }} />
+                                        <button className="btn-gradient btn-block" style={{ marginTop: 12 }}>Watch</button>
                                     </div>
                                 </div>
                             </div>

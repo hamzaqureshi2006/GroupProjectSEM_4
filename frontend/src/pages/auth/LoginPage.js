@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
+import Navbar from "../../compoenets/Navbar";
+import Sidebar from "../../compoenets/Sidebar";
 
 function LoginPage() {
     const [email, setEmail] = useState("");
@@ -28,9 +30,13 @@ function LoginPage() {
     };
 
     return (
-        <div className="container mt-5" style={{ maxWidth: "400px" }}>
-            <h2 className="mb-4">Login</h2>
-            <form onSubmit={handleLogin}>
+        <div className="homepage fade-in">
+            <Navbar />
+            <div className="content">
+                <Sidebar />
+                <div className="container mt-5" style={{ maxWidth: "400px" }}>
+                    <h2 className="mb-4">Login</h2>
+                    <form onSubmit={handleLogin}>
                 <div className="mb-3">
                     <label>Email address</label>
                     <input
@@ -53,16 +59,18 @@ function LoginPage() {
                     />
                 </div>
 
-                <button type="submit" className="btn btn-primary w-100">
-                    Login
-                </button>
-            </form>
+                        <button type="submit" className="btn btn-primary w-100">
+                            Login
+                        </button>
+                    </form>
 
-            <div className="mt-3 text-center">
-                <p>Don't have an account?</p>
-                <Link to="/register" className="btn btn-secondary">
-                    Register
-                </Link>
+                    <div className="mt-3 text-center">
+                        <p>Don't have an account?</p>
+                        <Link to="/register" className="btn btn-secondary">
+                            Register
+                        </Link>
+                    </div>
+                </div>
             </div>
         </div>
     );

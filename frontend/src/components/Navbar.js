@@ -35,16 +35,17 @@ function Navbar() {
     };
 
     return (
-        <nav className="navbar navbar-modern">
-            <div className="navbar-brand" onClick={() => navigate("/")}>TrueSphere</div>
+        <nav className="navbar">
+            <div className="navbar-brand">TrueSphere</div>
 
             <div className="navbar-search">
-                <input
-                    type="text"
-                    placeholder="Search videos, channels..."
-                    onChange={(e) => { setSearchQuery(e.target.value); }}
+                <input 
+                    type="text" 
+                    placeholder="Search videos, creators..." 
+                    onChange={(e) => { setSearchQuery(e.target.value) }} 
                 />
-                <button className="btn-gradient" style={{ marginLeft: 8 }}
+                <button 
+                    className="btn btn-primary"
                     onClick={() => navigate(`/search?search_query=${searchQuery}`)}
                 >
                     Search
@@ -52,37 +53,54 @@ function Navbar() {
             </div>
 
             <div className="navbar-actions">
-                <button className="btn-gradient" onClick={() => navigate("/upload")}>Upload</button>
-                <button className="btn-gradient" onClick={() => navigate("/about")}>About</button>
-                <button className="btn-gradient" onClick={() => navigate("/contact")}>Contact</button>
+                <button className="btn btn-primary" onClick={() => navigate("/upload")}>Upload Video</button>
 
                 {user ? (
-                    <div className="dropdown" style={{ position: "relative" }}>
-                        <img
-                            src={user.logo ? user.logo : "profilePicture.png"}
-                            alt="Profile"
-                            className="profile-logo"
-                            style={{
-                                width: 40,
-                                height: 40,
-                                borderRadius: "50%",
-                                cursor: "pointer",
-                                objectFit: "cover",
-                                border: "1px solid var(--glass-border)"
-                            }}
-                            onClick={() => document.getElementById("profileDropdown").classList.toggle("show")}
-                        />
+                                    <div className="dropdown" style={{ position: "relative" }}>
+                    <img
+                        src={user.logo ? user.logo : "profilePicture.png"}
+                        alt="Profile"
+                        className="profile-logo"
+                        onClick={() => document.getElementById("profileDropdown").classList.toggle("show")}
+                    />
 
-                        <div id="profileDropdown" className="dropdown-content glass">
+                        <div id="profileDropdown" className="dropdown-content">
                             <button onClick={() => navigate("/profile")}>Profile</button>
                             <button onClick={() => navigate("/settings")}>Settings</button>
                             <button onClick={handleLogout}>Logout</button>
                         </div>
                     </div>
                 ) : (
-                    <button className="btn-gradient" onClick={() => navigate("/login")}>Login / Register</button>
+                    <button className="btn btn-primary" onClick={() => navigate("/login")}>Login/Register</button>
                 )}
             </div>
+
+            {/* Dropdown CSS */}
+            <style>{`
+      .dropdown-content {
+        display: none;
+        position: absolute;
+        top: 50px; /* below the image */
+        right: 0;
+        background-color: white;
+        box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
+        z-index: 1;
+      }
+      .dropdown-content button {
+        padding: 10px;
+        width: 100%;
+        text-align: left;
+        border: none;
+        background: none;
+        cursor: pointer;
+      }
+      .dropdown-content button:hover {
+        background-color: #f2f2f2;
+      }
+      .show {
+        display: block;
+      }
+    `}</style>
         </nav>
     );
 

@@ -31,7 +31,7 @@ function SearchResultsPage() {
     }, [query]);
 
     return (
-        <div className="homepage">
+        <div className="homepage fade-in">
             <Navbar />
             <div className="content">
                 <Sidebar />
@@ -40,36 +40,47 @@ function SearchResultsPage() {
                     <h4>Search results for: <strong>{query}</strong></h4>
 
                     {loading ? (
-                        <p>Loading...</p>
+                        <div className="grid-gap-16 mt-16">
+                            {Array.from({ length: 6 }).map((_, idx) => (
+                                <div key={idx} className="card glass shadow-soft">
+                                    <div className="row">
+                                        <div className="col-md-4">
+                                            <div className="skeleton skeleton-thumb" />
+                                        </div>
+                                        <div className="col-md-8">
+                                            <div className="skeleton skeleton-text" style={{ width: "60%" }} />
+                                            <div className="skeleton skeleton-text" style={{ width: "40%" }} />
+                                            <div className="skeleton skeleton-text" style={{ width: "30%" }} />
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     ) : videos.length === 0 ? (
                         <p>No results found.</p>
                     ) : (
-                        <div className="list-group">
+                        <div className="grid-gap-16 mt-16">
                             {videos.map(video => (
                                 <div
                                     key={video._id}
-                                    className="list-group-item list-group-item-action"
-                                    style={{ cursor: "pointer" }}
+                                    className="card glass shadow-soft"
+                                    style={{ cursor: "pointer", padding: 12 }}
                                     onClick={() => navigate(`/watch?video_id=${video._id}`)}
                                 >
                                     <div className="row">
-                                        <div className="col-md-4 bg-dark">
+                                        <div className="col-md-4">
                                             <img
                                                 src={video.thumbnail_url}
                                                 alt={video.title}
-                                                className="img-fluid rounded"
-                                                style={{
-                                                    width: "100%",        // takes full width of its container
-                                                    height: "180px",      // fixed height for consistency
-                                                    objectFit: "contain"    // crops neatly without distortion
-                                                }}
+                                                className="img-fluid"
+                                                style={{ width: "100%", height: "180px", objectFit: "cover", borderRadius: 12 }}
                                             />
                                         </div>
                                         <div className="col-md-8">
-                                            <h5>{video.title}</h5>
-                                            <p className="mb-1">{video.category}</p>
-                                            <small>{video.views} views • {new Date(video.timestamp).toLocaleDateString()}</small>
-                                            <div>
+                                            <h5 style={{ marginTop: 8 }}>{video.title}</h5>
+                                            <p className="mb-1 text-secondary">{video.category}</p>
+                                            <small className="text-secondary">{video.views} views • {new Date(video.timestamp).toLocaleDateString()}</small>
+                                            <div className="mt-12">
                                                 {video.tags && video.tags.map((tag, idx) => (
                                                     <span key={idx} className="badge bg-secondary me-1">{tag}</span>
                                                 ))}

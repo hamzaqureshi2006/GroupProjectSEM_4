@@ -169,7 +169,7 @@ function VideoWatchPage() {
                                             <small className="text-muted">{uploader.subscribers}</small>
                                         </div>
                                     </div>
-                                    <button className={`btn ${isSubscribed ? 'btn-dark' : 'btn-danger'}`}
+                                    <button className={`${isSubscribed ? 'btn-unsubscribe' : 'btn-subscribe'}`}
                                         onClick={() => {
                                             axios.get(`http://localhost:5000/api/users/toggleSubscribe/${uploader._id}`, { withCredentials: true })
                                                 .then(res => { setUploader(res.data.targetUser) })
@@ -184,18 +184,30 @@ function VideoWatchPage() {
                                         }
                                         }
                                     >
-                                        Subscribe
+                                        {isSubscribed ? 'Unsubscribe' : 'Subscribe'}
                                     </button>
                                 </div>
 
                                 {/* Actions Row */}
                                 <div className="d-flex align-items-center mb-3" style={{ gap: "10px" }}>
-                                    <button className={`btn ${isLiked ? 'btn-success' : 'btn-light'}`} onClick={() => {
+                                    <div className="like-container">
+                                      <button className={`btn ${isLiked ? 'btn-like-active' : 'btn-light'}`} onClick={() => {
                                         axios.post(`http://localhost:5000/api/videos/togglelike/${video_id}`, {}, { withCredentials: true })
                                             .then(res => { console.log(res) })
                                             .catch(err => { console.error(err) });
                                         setIsLiked(!isLiked);//api changes data base and this changes the state to reflect that 
-                                    }}>👍 Like</button>
+                                    }}>{isLiked ? '👍 Liked' : '👍 Like'}</button>
+                                      {isLiked && (
+                                        <div className="confetti-burst" aria-hidden>
+                                          <span className="confetti-piece p1" />
+                                          <span className="confetti-piece p2" />
+                                          <span className="confetti-piece p3" />
+                                          <span className="confetti-piece p4" />
+                                          <span className="confetti-piece p5" />
+                                          <span className="confetti-piece p6" />
+                                        </div>
+                                      )}
+                                    </div>
                                     <button className={`btn ${isDisliked ? 'btn-danger' : 'btn-light'}`} onClick={() => {
                                         axios.post(`http://localhost:5000/api/videos/toggledislike/${video_id}`, {}, { withCredentials: true })
                                             .then(res => { console.log(res) })
