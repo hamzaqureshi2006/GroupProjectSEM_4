@@ -9,6 +9,7 @@ function RegisterPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [logo, setLogo] = useState(null);
+    const [banner, setBanner] = useState(null);
     const navigate = useNavigate();
 
     const handleRegister = async (e) => {
@@ -18,7 +19,8 @@ function RegisterPage() {
         formData.append("channelName", channelName);
         formData.append("email", email);
         formData.append("password", password);
-        formData.append("logo", logo);
+        if (logo) formData.append("logo", logo);
+        if (banner) formData.append("banner", banner);
 
         try {
             const res = await axios.post("http://localhost:5000/api/users/register", formData, {
@@ -83,6 +85,16 @@ function RegisterPage() {
                         className="form-control"
                         accept="image/*"
                         onChange={(e) => setLogo(e.target.files[0])}
+                    />
+                </div>
+
+                <div className="mb-3">
+                    <label>Channel Banner</label>
+                    <input
+                        type="file"
+                        className="form-control"
+                        accept="image/*"
+                        onChange={(e) => setBanner(e.target.files[0])}
                     />
                 </div>
 

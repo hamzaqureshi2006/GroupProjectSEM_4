@@ -17,6 +17,7 @@ import WatchHistoryPage from "./pages/videos/WatchHistoryPage";
 import SubscribedChannelsPage from "./pages/subscribedChannels/subscribedChannelsPage";
 import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
+import ChannelPage from "./pages/channel/ChannelPage";
 
 function App() {
   return (
@@ -43,6 +44,8 @@ function App() {
 
         {/* subscribed Channels */}
         <Route path="/subscribedChannels" element={<SubscribedChannelsPage />} />
+        {/* Channel Page */}
+        <Route path="/channel/:id" element={<ChannelPage />} />
 
         {/* Catch-all route for 404 */}
         <Route path="*" element={<h1>404 Not Found</h1>} />

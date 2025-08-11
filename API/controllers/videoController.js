@@ -155,29 +155,44 @@ const togglelikeVideo = async (req, res) => {
     const videoId = req.params.id;
     const userId = req.userId;
 
-    // Check if the video exists
     const video = await Video.findById(videoId);
-    const user = await User.findById(userId)
+    const user = await User.findById(userId);
 
-    if (!video) {
-      return res.status(404).json({ message: 'Video not found' });
-    }
-    // Check if the user has already liked the video
-    if (user.likedVideos.some(v => v._id.toString() === videoId)) {
-      // User has already liked the video, so we remove the like
-      user.likedVideos = user.likedVideos.filter(v => v._id.toString() !== videoId);
-      video.likes -= 1;
+    if (!video) return res.status(404).json({ message: 'Video not found' });
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    if (typeof video.likes !== 'number') video.likes = 0;
+
+    let isLiked;
+    if (user.likedVideos.some(v => v.toString() === videoId)) {
+      user.likedVideos = user.likedVideos.filter(v => v.toString() !== videoId);
+      video.likes = Math.max(0, video.likes - 1);
+      isLiked = false;
     } else {
-      // User has not liked the video, so we add the like
       user.likedVideos.push(videoId);
       video.likes += 1;
+      // If liked, ensure dislike removed
+      user.dislikedVideos = (user.dislikedVideos || []).filter(v => v.toString() !== videoId);
+      if (typeof video.dislikes !== 'number') video.dislikes = 0;
+      isLiked = true;
     }
+
     await user.save();
     await video.save();
-    res.status(200).json({ message: 'Video like status toggled successfully', video });
+
+    const isDisliked = user.dislikedVideos.some(v => v.toString() === videoId);
+
+    res.status(200).json({
+      message: 'Video like status toggled successfully',
+      videoId,
+      likes: video.likes,
+      dislikes: video.dislikes,
+      isLiked,
+      isDisliked,
+    });
   } catch (error) {
     console.error('Error toggling video like:', error.message);
-    res.status(500).json({ message: 'Server error while toggling video like' });
+    res.status(500).json({ message: 'Server error while toggling video like', error: error.message });
   }
 };
 
@@ -187,29 +202,44 @@ const toggledislikeVideo = async (req, res) => {
     const videoId = req.params.id;
     const userId = req.userId;
 
-    // Check if the video exists
     const video = await Video.findById(videoId);
-    const user = await User.findById(userId)
+    const user = await User.findById(userId);
 
-    if (!video) {
-      return res.status(404).json({ message: 'Video not found' });
-    }
-    // Check if the user has already disliked the video
-    if (user.dislikedVideos.some(v => v._id.toString() === videoId)) {
-      // User has already disliked the video, so we remove the dislike
-      user.dislikedVideos = user.dislikedVideos.filter(v => v._id.toString() !== videoId);
-      video.dislikes -= 1;
+    if (!video) return res.status(404).json({ message: 'Video not found' });
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    if (typeof video.dislikes !== 'number') video.dislikes = 0;
+
+    let isDisliked;
+    if (user.dislikedVideos.some(v => v.toString() === videoId)) {
+      user.dislikedVideos = user.dislikedVideos.filter(v => v.toString() !== videoId);
+      video.dislikes = Math.max(0, video.dislikes - 1);
+      isDisliked = false;
     } else {
-      // User has not disliked the video, so we add the dislike
       user.dislikedVideos.push(videoId);
       video.dislikes += 1;
+      // If disliked, ensure like removed
+      user.likedVideos = (user.likedVideos || []).filter(v => v.toString() !== videoId);
+      if (typeof video.likes !== 'number') video.likes = 0;
+      isDisliked = true;
     }
+
     await user.save();
     await video.save();
-    res.status(200).json({ message: 'Video dislike status toggled successfully', video });
+
+    const isLiked = user.likedVideos.some(v => v.toString() === videoId);
+
+    res.status(200).json({
+      message: 'Video dislike status toggled successfully',
+      videoId,
+      likes: video.likes,
+      dislikes: video.dislikes,
+      isLiked,
+      isDisliked,
+    });
   } catch (error) {
     console.error('Error toggling video dislike:', error.message);
-    res.status(500).json({ message: 'Server error while toggling video dislike' });
+    res.status(500).json({ message: 'Server error while toggling video dislike', error: error.message });
   }
 };
 
@@ -235,6 +265,17 @@ const getWatchedVideos = async (req, res) => {
   }
 };
 
+// Get videos by specific user id (channel)
+const getVideosByUserId = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const videos = await Video.find({ user_id: id }).sort({ timestamp: -1 });
+    res.status(200).json(videos);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to get channel videos', error: error.message });
+  }
+};
+
 module.exports = {
   uploadVideoController,
   togglelikeVideo,
@@ -244,6 +285,7 @@ module.exports = {
   getOwnVideos,
   searchVideos,
   getLikedVideos,
-  getWatchedVideos
+  getWatchedVideos,
+  getVideosByUserId
 };
 

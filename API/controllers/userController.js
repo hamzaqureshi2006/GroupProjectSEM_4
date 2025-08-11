@@ -11,13 +11,15 @@ const registerUser = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const logoUrl = req.file?.path || '';
+    const logoUrl = req.files?.logo?.[0]?.path || '';
+    const bannerUrl = req.files?.banner?.[0]?.path || '';
 
     const user = new User({
       channelName,
       email,
       password: hashedPassword,
       logo: logoUrl,
+      banner: bannerUrl,
     });
 
     await user.save();
@@ -78,6 +80,7 @@ const getUserDetails = async (req, res) => {
       channelName: user.channelName,
       email: user.email,
       logo: user.logo,
+      banner: user.banner,
     });
   } catch (err) {
     res.status(500).json({ message: "Server error" });
@@ -118,7 +121,7 @@ const toggleSubscribeUser = async (req, res) => {
     // Prevent duplicate subscription
     if (currentUser.subscribedChannels.includes(targetUserId)) {
       currentUser.subscribedChannels = currentUser.subscribedChannels.filter(id => id.toString() !== targetUserId);
-      targetUser.subscribers -= 1;
+      targetUser.subscribers = Math.max(0, (targetUser.subscribers || 0) - 1);
       await currentUser.save();
       await targetUser.save();
       console.log(`User ${currentUser.channelName} unsubscribed from ${targetUser.channelName}`);
@@ -127,7 +130,7 @@ const toggleSubscribeUser = async (req, res) => {
     }
 
     currentUser.subscribedChannels.push(targetUserId);
-    targetUser.subscribers += 1;
+    targetUser.subscribers = (targetUser.subscribers || 0) + 1;
 
     await currentUser.save();
     await targetUser.save();

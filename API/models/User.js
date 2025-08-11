@@ -5,6 +5,7 @@ const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   logo: { type: String }, // URL to profile image
+  banner: { type: String }, // URL to banner image
   subscribers: { type: Number, default: 0 },
   subscribedChannels: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   watchedVideos: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Video' }],

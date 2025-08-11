@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import './videoWatchPage.css';
 import Navbar from '../../compoenets/Navbar';
@@ -20,6 +20,41 @@ function VideoWatchPage() {
   const [loading, setLoading] = useState(true);
 //   const [user, setUser] = useState(null);  // Add user state
 const [currentUser, setCurrentUser] = useState(null);   
+const [likeAnimating, setLikeAnimating] = useState(false);
+
+  const likeLayerRef = useRef(null);
+
+  const triggerLikeBlast = () => {
+    const layer = likeLayerRef.current;
+    if (!layer) return;
+    const count = 26;
+    const confetti = ['🎉', '✨', '🎊', '💫', '⭐', '🔥'];
+
+    const ring = document.createElement('div');
+    ring.className = 'blast-ring';
+    layer.appendChild(ring);
+
+    for (let i = 0; i < count; i += 1) {
+      const el = document.createElement('span');
+      el.className = 'blast-particle';
+      const angle = (Math.PI * 2 * i) / count + (Math.random() * 0.6 - 0.3);
+      const distance = 70 + Math.random() * 60; // farther
+      const dx = Math.cos(angle) * distance;
+      const dy = Math.sin(angle) * distance;
+      el.style.setProperty('--tx', `${dx}px`);
+      el.style.setProperty('--ty', `${dy}px`);
+      el.style.setProperty('--rot', `${Math.floor(Math.random() * 360) - 180}deg`);
+      el.textContent = confetti[Math.floor(Math.random() * confetti.length)];
+      // Vary duration slightly for natural look
+      const dur = 750 + Math.floor(Math.random() * 300);
+      el.style.animationDuration = `${dur}ms`;
+      layer.appendChild(el);
+    }
+
+    setTimeout(() => {
+      while (layer.firstChild) layer.removeChild(layer.firstChild);
+    }, 1200);
+  };
 
   useEffect(() => {
   const fetchUser = async () => {
@@ -112,6 +147,56 @@ const [currentUser, setCurrentUser] = useState(null);
                 </div>
                 {/* Video Title */}
                 <h4 className="mt-3 fw-bold">{video.title}</h4>
+                {/* Video Actions */}
+                <div className="video-actions d-flex align-items-center mb-2">
+                  <div className="like-blast-wrapper">
+                    <div className="like-blast-layer" ref={likeLayerRef} />
+                    <button
+                      className={`btn btn-light me-2 btn-like ${isLiked ? 'active-like' : ''} ${likeAnimating ? 'celebrate' : ''}`}
+                      onClick={async () => {
+                        if (!currentUser?._id) return alert('Login to like videos!');
+                        try {
+                          const res = await axios.post(`http://localhost:5000/api/videos/togglelike/${video._id}`, {}, { withCredentials: true });
+                          const data = res.data;
+                          setIsLiked(data.isLiked);
+                          setIsDisliked(data.isDisliked);
+                          if (data.isLiked) {
+                            setLikeAnimating(false);
+                            requestAnimationFrame(() => {
+                              setLikeAnimating(true);
+                              triggerLikeBlast();
+                              setTimeout(() => setLikeAnimating(false), 450);
+                            });
+                          } else {
+                            setLikeAnimating(false);
+                          }
+                        } catch (err) {
+                          alert('Failed to like video');
+                        }
+                      }}
+                      aria-pressed={isLiked}
+                    >
+                      {isLiked ? '👍 Liked' : '👍 Like'}
+                    </button>
+                  </div>
+                  <button
+                    className={`btn btn-light me-2 ${isDisliked ? 'active-dislike' : ''}`}
+                    onClick={async () => {
+                      if (!currentUser?._id) return alert('Login to dislike videos!');
+                      try {
+                        const res = await axios.post(`http://localhost:5000/api/videos/toggledislike/${video._id}`, {}, { withCredentials: true });
+                        const data = res.data;
+                        setIsLiked(data.isLiked);
+                        setIsDisliked(data.isDisliked);
+                        setLikeAnimating(false);
+                      } catch (err) {
+                        alert('Failed to dislike video');
+                      }
+                    }}
+                  >
+                    👎 Dislike
+                  </button>
+                </div>
                 {/* Uploader Section */}
                 <div className="d-flex align-items-center justify-content-between mt-2 mb-3">
                   <div className="d-flex align-items-center">
@@ -133,8 +218,19 @@ const [currentUser, setCurrentUser] = useState(null);
                   </div>
                   <button
                     className={`${isSubscribed ? "btn-unsubscribe" : "btn-subscribe"}`}
-                    onClick={() => {
-                      // TODO: Implement subscription toggle logic here
+                    onClick={async () => {
+                      if (!currentUser?._id) return alert('Login to subscribe!');
+                      try {
+                        const res = await axios.get(`http://localhost:5000/api/users/toggleSubscribe/${uploader._id}`, { withCredentials: true });
+                        setIsSubscribed((prev) => !prev);
+                        // Update local subscriber count to avoid reload
+                        setUploader((prev) => ({
+                          ...prev,
+                          subscribers: Math.max(0, (prev.subscribers || 0) + (isSubscribed ? -1 : 1))
+                        }));
+                      } catch (err) {
+                        alert('Failed to subscribe/unsubscribe');
+                      }
                     }}
                   >
                     {isSubscribed ? "Unsubscribe" : "Subscribe"}

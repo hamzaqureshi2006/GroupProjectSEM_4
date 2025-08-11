@@ -13,7 +13,8 @@ const {
   watchVideo,
   getLikedVideos,
   getWatchedVideos,
-  searchVideos
+  searchVideos,
+  getVideosByUserId
 } = require('../controllers/videoController');
 
 // upload video , delete video , get Liked videos , get viewed videos 
@@ -34,6 +35,9 @@ router.delete('/:id', authenticate, deleteVideo);
 
 // Get videos uploaded by the authenticated user
 router.get('/user/:id', authenticate, getOwnVideos);
+
+// Get videos uploaded by a specific user (channel)
+router.get('/byUser/:id', getVideosByUserId);
 
 // Get a single video by ID
 router.get('/watchVideo/:id', authenticate, watchVideo);

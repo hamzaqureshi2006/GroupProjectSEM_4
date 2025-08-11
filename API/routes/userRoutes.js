@@ -15,7 +15,7 @@ const {
 
 
 // POST /api/users/register
-router.post('/register', upload.single('logo'), registerUser);
+router.post('/register', upload.fields([{ name: 'logo', maxCount: 1 }, { name: 'banner', maxCount: 1 }]), registerUser);
 
 // POST /api/users/login
 router.post('/login', loginUser);
