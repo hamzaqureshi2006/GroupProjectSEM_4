@@ -1,5 +1,5 @@
 """
-WSGI config for comments project.
+WSGI config for ml_backend project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'comments.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ml_backend.settings')
 
 application = get_wsgi_application()
