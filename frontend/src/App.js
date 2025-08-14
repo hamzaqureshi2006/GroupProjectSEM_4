@@ -9,6 +9,7 @@ import RegisterPage from "./pages/auth/RegisterPage";
 import ProfilePage from "./pages/profile/ProfilePage";
 import SettingsPage from "./pages/profile/SettingsPage";
 import NewsPage from "./pages/news/NewsPage";
+import ReadArticlePage from "./pages/news/ReadArticlePage";
 import UploadVideoPage from "./pages/videos/UploadVideoPage";
 import VideoWatchPage from "./pages/videos/VideoWatchPage";
 import SearchResultsPage from "./pages/videos/SearchResultsPage";
@@ -52,6 +53,7 @@ function App() {
 
         {/* News Page */}
         <Route path="/news" element={<NewsPage />} />
+        <Route path="/news/read" element={<ReadArticlePage />} />
 
         {/* Static Pages */}
         <Route path="/about" element={<AboutPage />} />

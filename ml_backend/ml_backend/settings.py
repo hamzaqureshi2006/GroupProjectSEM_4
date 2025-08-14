@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'summarization',
     'spam',
     'corsheaders',
     'rest_framework',  # Add rest_framework to installed apps
