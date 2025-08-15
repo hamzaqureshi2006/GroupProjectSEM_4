@@ -221,7 +221,7 @@ const [likeAnimating, setLikeAnimating] = useState(false);
                     onClick={async () => {
                       if (!currentUser?._id) return alert('Login to subscribe!');
                       try {
-                        const res = await axios.get(`http://localhost:5000/api/users/toggleSubscribe/${uploader._id}`, { withCredentials: true });
+                        await axios.get(`http://localhost:5000/api/users/toggleSubscribe/${uploader._id}`, { withCredentials: true });
                         setIsSubscribed((prev) => !prev);
                         // Update local subscriber count to avoid reload
                         setUploader((prev) => ({
@@ -263,8 +263,8 @@ const [likeAnimating, setLikeAnimating] = useState(false);
                       style={{ position: "relative" }}
                     >
                       <img
-                        src={"/profilePicture.png"}
-                        alt="User"
+                        src={comment?.user?.logo || "/profilePicture.png"}
+                        alt={"/profilePicture.png"}
                         style={{
                           width: "40px",
                           height: "40px",
@@ -275,7 +275,7 @@ const [likeAnimating, setLikeAnimating] = useState(false);
                       />
                       <div style={{ position: "relative" }}>
                         <div className="fw-bold" style={{ position: "relative" }}>
-                          {comment.user_id.channelName}
+                          @User
                           <span className="ms-2 text-muted" style={{ fontSize: "12px" }}>
                             {comment.timestamp ? new Date(comment.timestamp).toLocaleDateString() : ""}
                           </span>

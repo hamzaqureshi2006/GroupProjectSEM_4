@@ -13,6 +13,7 @@ client = MongoClient(
 )
 db = client['test']
 comments_collection = db['comments']
+users_collection = db['User']
 
 # Helper to make MongoDB docs JSON-safe
 def serialize_comment(comment):
@@ -36,6 +37,7 @@ def serialize_comment(comment):
     # Add UI-friendly badge color for spam
     safe_comment["badge_color"] = "red" if safe_comment.get("is_spam") else "transparent"
     return safe_comment
+
 @api_view(['GET'])
 def comment_list(request):
     video_id = request.query_params.get('video_id')
@@ -43,7 +45,13 @@ def comment_list(request):
         return Response({"error": "video_id query param is required"}, status=status.HTTP_400_BAD_REQUEST)
 
     comments_cursor = comments_collection.find({"video_id": video_id})
-    comments = [serialize_comment(c) for c in comments_cursor]
+    comments = []
+
+    for c in comments_cursor:
+        user = users_collection.find_one({"_id": c["user_id"]})
+        c["user"] = user
+        comments.append(serialize_comment(c))
+
     return Response(comments)
 
 @api_view(['POST'])
