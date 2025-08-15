@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import Navbar from "../compoenets/Navbar";
-import Sidebar from "../compoenets/Sidebar";
+import Navbar from "../components/Navbar";
+import Sidebar from "../components/Sidebar";
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({ name: "", email: "", message: "" });

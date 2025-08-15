@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import Navbar from '../../compoenets/Navbar';
-import Sidebar from '../../compoenets/Sidebar';
+import Navbar from '../../components/Navbar';
+import Sidebar from '../../components/Sidebar';
 import axios from 'axios';
 
 export default function ChannelPage() {

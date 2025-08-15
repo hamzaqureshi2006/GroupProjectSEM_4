@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
-import Navbar from "../../compoenets/Navbar";
-import Sidebar from "../../compoenets/Sidebar";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
 
 function LoginPage() {
     const [email, setEmail] = useState("");

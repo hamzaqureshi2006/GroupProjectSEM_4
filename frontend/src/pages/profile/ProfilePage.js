@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Navbar from "../../compoenets/Navbar";
-import Sidebar from "../../compoenets/Sidebar";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
 
 function ProfilePage() {
     const [user, setUser] = useState(null);

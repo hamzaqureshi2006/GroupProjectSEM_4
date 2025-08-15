@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import './videoWatchPage.css';
-import Navbar from '../../compoenets/Navbar';
-import Sidebar from '../../compoenets/Sidebar';
+import Navbar from '../../components/Navbar';
+import Sidebar from '../../components/Sidebar';
 import axios from 'axios';
 
 function VideoWatchPage() {
@@ -275,7 +275,7 @@ const [likeAnimating, setLikeAnimating] = useState(false);
                       />
                       <div style={{ position: "relative" }}>
                         <div className="fw-bold" style={{ position: "relative" }}>
-                          @User
+                          {comment.user_id.channelName}
                           <span className="ms-2 text-muted" style={{ fontSize: "12px" }}>
                             {comment.timestamp ? new Date(comment.timestamp).toLocaleDateString() : ""}
                           </span>
