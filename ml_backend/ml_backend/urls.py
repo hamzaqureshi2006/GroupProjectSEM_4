@@ -21,4 +21,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('spam.urls')),
     path("api/", include("summarization.urls")),
+    path("api/recommendations/", include("recommendations.urls")),
 ]

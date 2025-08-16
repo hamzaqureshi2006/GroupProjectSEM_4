@@ -14,7 +14,9 @@ const {
   getLikedVideos,
   getWatchedVideos,
   searchVideos,
-  getVideosByUserId
+  getVideosByUserId,
+  getRecommendedVideos,
+  getHomepageRecommendations
 } = require('../controllers/videoController');
 
 // upload video , delete video , get Liked videos , get viewed videos 
@@ -56,6 +58,12 @@ router.get('/likedVideos', authenticate, getLikedVideos);
 
 // Get watched videos of the authenticated user
 router.get('/watchedVideos', authenticate, getWatchedVideos);
+
+// Get recommended videos for a specific video
+router.get('/recommend/:videoId', getRecommendedVideos);
+
+// Get homepage recommended videos
+router.get('/homepage-recommendations', getHomepageRecommendations);
 
 module.exports = router;
 

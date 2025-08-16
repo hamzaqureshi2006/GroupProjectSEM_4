@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import './videoWatchPage.css';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Sidebar';
+import RecommendedVideos from '../../components/RecommendedVideos';
 import axios from 'axios';
 
 function VideoWatchPage() {
@@ -307,8 +308,7 @@ const [likeAnimating, setLikeAnimating] = useState(false);
               </div>
               {/* Recommended Videos Sidebar */}
               <div className="col-md-4">
-                <h5>Recommended Videos</h5>
-                {/* Future: map recommended videos here */}
+                <RecommendedVideos videoId={video_id} currentVideoTitle={video?.title} />
               </div>
             </div>
           </div>

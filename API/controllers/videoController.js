@@ -276,6 +276,208 @@ const getVideosByUserId = async (req, res) => {
   }
 };
 
+// Get recommended videos for a specific video
+const getRecommendedVideos = async (req, res) => {
+  try {
+    const { videoId } = req.params;
+    
+    // Get the current video
+    const currentVideo = await Video.findById(videoId);
+    if (!currentVideo) {
+      return res.status(404).json({ message: 'Video not found' });
+    }
+    
+    // Get all videos (excluding the current one)
+    const allVideos = await Video.find({ _id: { $ne: videoId } }).select('_id title description tags');
+    
+    if (allVideos.length === 0) {
+      return res.status(200).json({ recommendedVideos: [] });
+    }
+    
+    // Prepare data for Python AI service
+    const requestData = {
+      video: {
+        _id: currentVideo._id.toString(),
+        title: currentVideo.title,
+        description: currentVideo.description || '',
+        tags: currentVideo.tags || []
+      },
+      allVideos: allVideos.map(video => ({
+        _id: video._id.toString(),
+        title: video.title,
+        description: video.description || '',
+        tags: video.tags || []
+      }))
+    };
+    
+    // Call Python AI service
+    const axios = require('axios');
+    const pythonResponse = await axios.post('http://localhost:8000/api/recommendations/recommend/', requestData);
+    
+    if (pythonResponse.data.recommended_video_ids) {
+      // Get full video details for recommended videos
+      const recommendedVideos = await Video.find({
+        _id: { $in: pythonResponse.data.recommended_video_ids }
+      }).select('_id title thumbnail_url video_url user_id views timestamp');
+      
+      // Populate user information for each video
+      const populatedVideos = await Video.populate(recommendedVideos, {
+        path: 'user_id',
+        select: 'channelName logo'
+      });
+      
+      res.status(200).json({ 
+        recommendedVideos: populatedVideos,
+        similarities: pythonResponse.data.similarities
+      });
+    } else {
+      res.status(200).json({ recommendedVideos: [] });
+    }
+    
+  } catch (error) {
+    console.error('Error getting recommended videos:', error.message);
+    res.status(500).json({ 
+      message: 'Failed to get recommended videos', 
+      error: error.message 
+    });
+  }
+};
+
+// Get homepage recommended videos (based on user preferences or trending)
+const getHomepageRecommendations = async (req, res) => {
+  try {
+    const userId = req.userId; // Get current user ID from auth middleware
+    
+    // Get all videos for recommendation
+    const allVideos = await Video.find().select('_id title description tags views timestamp category');
+    
+    if (allVideos.length === 0) {
+      return res.status(200).json({ recommendedVideos: [] });
+    }
+    
+    let seedVideo;
+    
+    if (userId) {
+      // Try to get user-specific recommendations based on their behavior
+      try {
+        const user = await User.findById(userId).populate('likedVideos watchedVideos');
+        
+        if (user && user.likedVideos && user.likedVideos.length > 0) {
+          // Use user's liked videos as seed for recommendations
+          const likedVideoIds = user.likedVideos.map(v => v._id.toString());
+          const likedVideos = allVideos.filter(v => likedVideoIds.includes(v._id.toString()));
+          
+          if (likedVideos.length > 0) {
+            // Pick a random liked video as seed
+            seedVideo = likedVideos[Math.floor(Math.random() * likedVideos.length)];
+          }
+        } else if (user && user.watchedVideos && user.watchedVideos.length > 0) {
+          // Use user's watch history as seed
+          const watchedVideoIds = user.watchedVideos.map(v => v._id.toString());
+          const watchedVideos = allVideos.filter(v => watchedVideoIds.includes(v._id.toString()));
+          
+          if (watchedVideos.length > 0) {
+            // Pick a random watched video as seed
+            seedVideo = watchedVideos[Math.floor(Math.random() * watchedVideos.length)];
+          }
+        }
+      } catch (userError) {
+        console.log('User not found or error fetching user data, using trending approach');
+      }
+    }
+    
+    // If no user-specific seed found, use trending approach
+    if (!seedVideo) {
+      const trendingVideos = allVideos
+        .sort((a, b) => {
+          // Sort by views (60%), recency (30%), and category diversity (10%)
+          const viewScore = (a.views || 0) / Math.max(...allVideos.map(v => v.views || 0));
+          const recencyScore = (new Date(a.timestamp) - new Date(0)) / (new Date() - new Date(0));
+          const categoryScore = Math.random() * 0.1; // Add some randomness for diversity
+          return (viewScore * 0.6 + recencyScore * 0.3 + categoryScore) - 
+                 (b.views || 0) / Math.max(...allVideos.map(v => v.views || 0)) * 0.6 - 
+                 (new Date(b.timestamp) - new Date(0)) / (new Date() - new Date(0)) * 0.3 - 
+                 Math.random() * 0.1;
+        })
+        .slice(0, Math.min(10, allVideos.length));
+      
+      seedVideo = trendingVideos[0];
+    }
+    
+    // Prepare data for Python AI service
+    const requestData = {
+      video: {
+        _id: seedVideo._id.toString(),
+        title: seedVideo.title,
+        description: seedVideo.description || '',
+        tags: seedVideo.tags || []
+      },
+      allVideos: allVideos.map(video => ({
+        _id: video._id.toString(),
+        title: video.title,
+        description: video.description || '',
+        tags: video.tags || []
+      }))
+    };
+    
+    // Call Python AI service
+    const axios = require('axios');
+    const pythonResponse = await axios.post('http://localhost:8000/api/recommendations/recommend/', requestData);
+    
+    if (pythonResponse.data.recommended_video_ids) {
+      // Get full video details for recommended videos
+      const recommendedVideos = await Video.find({
+        _id: { $in: pythonResponse.data.recommended_video_ids }
+      }).select('_id title thumbnail_url video_url user_id views timestamp duration category');
+      
+      // Populate user information for each video
+      const populatedVideos = await Video.populate(recommendedVideos, {
+        path: 'user_id',
+        select: 'channelName logo'
+      });
+      
+      res.status(200).json({ 
+        recommendedVideos: populatedVideos,
+        similarities: pythonResponse.data.similarities,
+        seedVideo: {
+          title: seedVideo.title,
+          category: seedVideo.category
+        }
+      });
+    } else {
+      // Fallback: return trending videos if AI fails
+      const fallbackVideos = allVideos
+        .sort((a, b) => (b.views || 0) - (a.views || 0))
+        .slice(0, 5);
+      
+      const fallbackVideoDetails = await Video.find({
+        _id: { $in: fallbackVideos.map(v => v._id) }
+      }).select('_id title thumbnail_url video_url user_id views timestamp duration category');
+      
+      const populatedFallbackVideos = await Video.populate(fallbackVideoDetails, {
+        path: 'user_id',
+        select: 'channelName logo'
+      });
+      
+      res.status(200).json({ 
+        recommendedVideos: populatedFallbackVideos,
+        similarities: [1.0, 0.9, 0.8, 0.7, 0.6], // Default similarity scores
+        seedVideo: {
+          title: seedVideo.title,
+          category: seedVideo.category
+        }
+      });
+    }
+    
+  } catch (error) {
+    console.error('Error getting homepage recommendations:', error.message);
+    res.status(500).json({ 
+      message: 'Failed to get homepage recommendations', 
+      error: error.message 
+    });
+  }
+};
+
 module.exports = {
   uploadVideoController,
   togglelikeVideo,
@@ -286,6 +488,8 @@ module.exports = {
   searchVideos,
   getLikedVideos,
   getWatchedVideos,
-  getVideosByUserId
+  getVideosByUserId,
+  getRecommendedVideos,
+  getHomepageRecommendations
 };
 
