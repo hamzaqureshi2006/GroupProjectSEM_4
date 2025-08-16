@@ -1,6 +1,7 @@
 import React from "react";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
+import HomepageRecommendedVideos from "../components/HomepageRecommendedVideos";
 
 function HomePage() {
 
@@ -21,7 +22,11 @@ function HomePage() {
             <div className="content">
                 <Sidebar />
                 <div className="col-md-10 p-5">
-                    <div className="row">
+                    {/* Recommended Videos Section */}
+                    <HomepageRecommendedVideos />
+                    
+                    {/* Other Content */}
+                    {/* <div className="row">
                         {videos.map(video => (
                             <div key={video.id} className="col-md-4 mb-4">
                                 <div className="card">
@@ -34,7 +39,7 @@ function HomePage() {
                                 </div>
                             </div>
                         ))}
-                    </div>
+                    </div> */}
                 </div>
             </div>
         </div>
