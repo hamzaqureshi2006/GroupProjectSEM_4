@@ -1,5 +1,5 @@
 node_modules/
 .env
-myenv_django/
+myenv_django
 __pycache__/
 *.pyc
