@@ -5,6 +5,7 @@ import './HomepageRecommendedVideos.css';
 
 const HomepageRecommendedVideos = () => {
   const [recommendedVideos, setRecommendedVideos] = useState([]);
+  const [recommendedPosts, setRecommendedPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [lastRefresh, setLastRefresh] = useState(new Date());
@@ -25,15 +26,32 @@ const HomepageRecommendedVideos = () => {
   const fetchHomepageRecommendations = async () => {
     setLoading(true);
     setError(null);
-    
+    let videos = [];
+    let posts = [];
+    let videoError = false;
+    let postError = false;
     try {
-      const response = await axios.get(
-        'http://localhost:5000/api/videos/homepage-recommendations',
-        { withCredentials: true }
-      );
-      
-      setRecommendedVideos(response.data.recommendedVideos || []);
+      const videoPromise = axios.get('http://localhost:5000/api/videos/homepage-recommendations', { withCredentials: true });
+      const postPromise = axios.get('http://localhost:5000/api/posts/recommended', { withCredentials: true });
+      const [videoRes, postRes] = await Promise.allSettled([videoPromise, postPromise]);
+      if (videoRes.status === 'fulfilled') {
+        videos = videoRes.value.data.recommendedVideos || [];
+        setRecommendedVideos(videos);
+      } else {
+        videoError = true;
+        setRecommendedVideos([]);
+      }
+      if (postRes.status === 'fulfilled') {
+        posts = postRes.value.data.posts || [];
+        setRecommendedPosts(posts);
+      } else {
+        postError = true;
+        setRecommendedPosts([]);
+      }
       setLastRefresh(new Date());
+      if (videoError && postError) {
+        setError('Failed to load recommendations');
+      }
     } catch (err) {
       console.error('Error fetching homepage recommendations:', err);
       setError('Failed to load recommendations');
@@ -91,7 +109,7 @@ const HomepageRecommendedVideos = () => {
     );
   }
 
-  if (error) {
+  if (error && recommendedVideos.length === 0 && recommendedPosts.length === 0) {
     return (
       <div className="homepage-recommendations">
         <h2>Recommended for You</h2>
@@ -104,8 +122,7 @@ const HomepageRecommendedVideos = () => {
       </div>
     );
   }
-
-  if (recommendedVideos.length === 0) {
+  if (recommendedVideos.length === 0 && recommendedPosts.length === 0) {
     return (
       <div className="homepage-recommendations">
         <h2>Recommended for You</h2>
@@ -133,48 +150,88 @@ const HomepageRecommendedVideos = () => {
           </span>
         </div>
       </div>
-      <div className="videos-grid">
-        {recommendedVideos.map((video) => (
-          <Link
-            key={video._id}
-            to={`/watch?video_id=${video._id}`}
-            className="video-card"
-            onClick={() => window.scrollTo(0, 0)}
-          >
-            <div className="video-thumbnail">
-              <img 
-                src={video.thumbnail_url} 
-                alt={video.title}
-                onError={(e) => {
-                  e.target.src = 'https://dummyimage.com/300x180/eee/aaa';
-                }}
-              />
-              {video.duration > 0 && (
-                <span className="duration">{formatDuration(video.duration)}</span>
-              )}
-            </div>
-            
-            <div className="video-info">
-              <h3 className="video-title" title={video.title}>
-                {video.title.length > 60 
-                  ? video.title.substring(0, 60) + '...' 
-                  : video.title
-                }
-              </h3>
-              
-              <p className="channel-name">
-                {video.user_id?.channelName || 'Unknown Channel'}
-              </p>
-              
-              <div className="video-stats">
-                <span className="views">{formatViews(video.views)} views</span>
-                <span className="dot">•</span>
-                <span className="time-ago">{formatTimeAgo(video.timestamp)}</span>
+      {/* Videos Section */}
+      {recommendedVideos.length > 0 && (
+        <>
+          <h4 style={{marginTop: 24}}>Recommended Videos</h4>
+          <div className="videos-grid">
+            {recommendedVideos.map((video) => (
+              <Link
+                key={video._id}
+                to={`/watch?video_id=${video._id}`}
+                className="video-card"
+                onClick={() => window.scrollTo(0, 0)}
+              >
+                <div className="video-thumbnail">
+                  <img 
+                    src={video.thumbnail_url} 
+                    alt={video.title}
+                    onError={(e) => {
+                      e.target.src = 'https://dummyimage.com/300x180/eee/aaa';
+                    }}
+                  />
+                  {video.duration > 0 && (
+                    <span className="duration">{formatDuration(video.duration)}</span>
+                  )}
+                </div>
+                <div className="video-info">
+                  <h3 className="video-title" title={video.title}>
+                    {video.title.length > 60 
+                      ? video.title.substring(0, 60) + '...' 
+                      : video.title
+                    }
+                  </h3>
+                  <p className="channel-name">
+                    {video.user_id?.channelName || 'Unknown Channel'}
+                  </p>
+                  <div className="video-stats">
+                    <span className="views">{formatViews(video.views)} views</span>
+                    <span className="dot">•</span>
+                    <span className="time-ago">{formatTimeAgo(video.timestamp)}</span>
+                  </div>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </>
+      )}
+      {/* Posts Section */}
+      {recommendedPosts.length > 0 && (
+        <>
+          <h4 style={{marginTop: 32}}>Recommended Posts</h4>
+          <div className="videos-grid">
+            {recommendedPosts.map((post) => (
+              <div key={post._id} className="video-card" style={{cursor:'default'}}>
+                <div className="video-thumbnail">
+                  <img 
+                    src={post.image_url || 'https://dummyimage.com/300x180/eee/aaa'} 
+                    alt={post.title}
+                    onError={(e) => {
+                      e.target.src = 'https://dummyimage.com/300x180/eee/aaa';
+                    }}
+                  />
+                </div>
+                <div className="video-info">
+                  <h3 className="video-title" title={post.title}>
+                    {post.title.length > 60 
+                      ? post.title.substring(0, 60) + '...' 
+                      : post.title
+                    }
+                  </h3>
+                  <p className="channel-name">
+                    {post.user_id?.username || 'Unknown User'}
+                  </p>
+                  <div className="video-stats">
+                    <span className="views">{formatViews(post.views)} views</span>
+                    <span className="dot">•</span>
+                    <span className="time-ago">{formatTimeAgo(post.timestamp)}</span>
+                  </div>
+                </div>
               </div>
-            </div>
-          </Link>
-        ))}
-      </div>
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 };

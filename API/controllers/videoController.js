@@ -348,8 +348,8 @@ const getHomepageRecommendations = async (req, res) => {
   try {
     const userId = req.userId; // Get current user ID from auth middleware
     
-    // Get all videos for recommendation
-    const allVideos = await Video.find().select('_id title description tags views timestamp category');
+  // Get all videos for recommendation (including user's own)
+  const allVideos = await Video.find().select('_id title description tags views timestamp category');
     
     if (allVideos.length === 0) {
       return res.status(200).json({ recommendedVideos: [] });
@@ -422,52 +422,61 @@ const getHomepageRecommendations = async (req, res) => {
     
     // Call Python AI service
     const axios = require('axios');
-    const pythonResponse = await axios.post('http://localhost:8000/api/recommendations/recommend/', requestData);
-    
-    if (pythonResponse.data.recommended_video_ids) {
-      // Get full video details for recommended videos
-      const recommendedVideos = await Video.find({
-        _id: { $in: pythonResponse.data.recommended_video_ids }
-      }).select('_id title thumbnail_url video_url user_id views timestamp duration category');
-      
-      // Populate user information for each video
-      const populatedVideos = await Video.populate(recommendedVideos, {
-        path: 'user_id',
-        select: 'channelName logo'
-      });
-      
-      res.status(200).json({ 
-        recommendedVideos: populatedVideos,
-        similarities: pythonResponse.data.similarities,
-        seedVideo: {
-          title: seedVideo.title,
-          category: seedVideo.category
+    let recommendedVideos = [];
+    try {
+      const pythonResponse = await axios.post('http://localhost:8000/api/recommendations/recommend/', requestData);
+      if (pythonResponse.data.recommended_video_ids) {
+        let aiVideos = await Video.find({
+          _id: { $in: pythonResponse.data.recommended_video_ids }
+        }).select('_id title thumbnail_url video_url user_id views timestamp duration category');
+        aiVideos = await Video.populate(aiVideos, {
+          path: 'user_id',
+          select: 'channelName logo'
+        });
+        // Separate videos from other users and from self
+        const otherVideos = aiVideos.filter(v => v.user_id && v.user_id._id.toString() !== userId);
+        const myVideos = aiVideos.filter(v => v.user_id && v.user_id._id.toString() === userId);
+        // If not enough from others, fill with random others
+        let needed = 5 - otherVideos.length;
+        let extraOthers = [];
+        if (needed > 0) {
+          extraOthers = await Video.find({ user_id: { $ne: userId, $nin: otherVideos.map(v=>v.user_id._id) } })
+            .select('_id title thumbnail_url video_url user_id views timestamp duration category')
+            .populate('user_id', 'channelName logo')
+            .limit(needed);
         }
-      });
-    } else {
-      // Fallback: return trending videos if AI fails
-      const fallbackVideos = allVideos
-        .sort((a, b) => (b.views || 0) - (a.views || 0))
-        .slice(0, 5);
-      
-      const fallbackVideoDetails = await Video.find({
-        _id: { $in: fallbackVideos.map(v => v._id) }
-      }).select('_id title thumbnail_url video_url user_id views timestamp duration category');
-      
-      const populatedFallbackVideos = await Video.populate(fallbackVideoDetails, {
-        path: 'user_id',
-        select: 'channelName logo'
-      });
-      
-      res.status(200).json({ 
-        recommendedVideos: populatedFallbackVideos,
-        similarities: [1.0, 0.9, 0.8, 0.7, 0.6], // Default similarity scores
-        seedVideo: {
-          title: seedVideo.title,
-          category: seedVideo.category
-        }
-      });
+        // Compose: mostly others, some self
+        recommendedVideos = [...otherVideos, ...extraOthers, ...myVideos].slice(0, 10);
+        return res.status(200).json({ 
+          recommendedVideos,
+          similarities: pythonResponse.data.similarities,
+          seedVideo: {
+            title: seedVideo.title,
+            category: seedVideo.category
+          }
+        });
+      }
+    } catch (aiError) {
+      console.error('Python AI video recommendation failed, falling back to trending/random:', aiError.message);
     }
+    // Fallback: trending/random, mix others and self
+    const others = await Video.find({ user_id: { $ne: userId } })
+      .select('_id title thumbnail_url video_url user_id views timestamp duration category')
+      .populate('user_id', 'channelName logo')
+      .limit(7);
+    const mine = await Video.find({ user_id: userId })
+      .select('_id title thumbnail_url video_url user_id views timestamp duration category')
+      .populate('user_id', 'channelName logo')
+      .limit(3);
+    const populatedFallbackVideos = [...others, ...mine];
+    res.status(200).json({ 
+      recommendedVideos: populatedFallbackVideos,
+      similarities: [1.0, 0.9, 0.8, 0.7, 0.6], // Default similarity scores
+      seedVideo: {
+        title: seedVideo.title,
+        category: seedVideo.category
+      }
+    });
     
   } catch (error) {
     console.error('Error getting homepage recommendations:', error.message);
