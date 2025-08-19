@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Navbar from "../../components/Navbar";
 import Sidebar from "../../components/Sidebar";
@@ -6,6 +7,7 @@ import Sidebar from "../../components/Sidebar";
 function RecommendedPostsPage() {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchRecommended = async () => {
@@ -22,6 +24,10 @@ function RecommendedPostsPage() {
         };
         fetchRecommended();
     }, []);
+
+    const handlePostClick = (postId) => {
+        navigate(`/post/${postId}`);
+    };
 
     return (
         <div className="homepage fade-in">
@@ -40,7 +46,12 @@ function RecommendedPostsPage() {
                     ) : (
                         <div className="grid-gap-16 mt-16">
                             {posts.map(post => (
-                                <div key={post._id} className="card glass shadow-soft" style={{ padding: 16 }}>
+                                <div 
+                                    key={post._id} 
+                                    className="card glass shadow-soft clickable-card" 
+                                    style={{ padding: 16, cursor: 'pointer' }}
+                                    onClick={() => handlePostClick(post._id)}
+                                >
                                     <div className="row">
                                         {post.image_url && (
                                             <div className="col-md-4 mb-2">

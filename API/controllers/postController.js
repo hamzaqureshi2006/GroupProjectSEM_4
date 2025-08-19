@@ -156,7 +156,8 @@ const toggleLikePost = async (req, res) => {
 
     // Check if user has already liked the post
     const user = await User.findById(userId);
-    const hasLiked = user.likedPosts && user.likedPosts.includes(id);
+    const hasLiked = user.likedPosts && user.likedPosts.some(postId => postId.toString() === id);
+    const hasDisliked = user.dislikedPosts && user.dislikedPosts.some(postId => postId.toString() === id);
 
     if (hasLiked) {
       // Unlike the post
@@ -167,6 +168,11 @@ const toggleLikePost = async (req, res) => {
       post.likes += 1;
       if (!user.likedPosts) user.likedPosts = [];
       user.likedPosts.push(id);
+      // If post was disliked, remove from dislikes
+      if (hasDisliked) {
+        post.dislikes = Math.max(0, post.dislikes - 1);
+        user.dislikedPosts = user.dislikedPosts.filter(postId => postId.toString() !== id);
+      }
     }
 
     await post.save();
@@ -176,7 +182,9 @@ const toggleLikePost = async (req, res) => {
       success: true,
       message: hasLiked ? 'Post unliked' : 'Post liked',
       likes: post.likes,
-      isLiked: !hasLiked
+      dislikes: post.dislikes,
+      isLiked: !hasLiked,
+      isDisliked: false
     });
   } catch (error) {
     console.error('Error toggling post like:', error);
@@ -188,13 +196,77 @@ const toggleLikePost = async (req, res) => {
   }
 };
 
+// Dislike/undislike a post
+const toggleDislikePost = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userId = req.userId;
+
+    const post = await Post.findById(id);
+    if (!post) {
+      return res.status(404).json({
+        success: false,
+        message: 'Post not found'
+      });
+    }
+
+    const user = await User.findById(userId);
+    const hasDisliked = user.dislikedPosts && user.dislikedPosts.some(postId => postId.toString() === id);
+    const hasLiked = user.likedPosts && user.likedPosts.some(postId => postId.toString() === id);
+
+    if (hasDisliked) {
+      // Undislike the post
+      post.dislikes = Math.max(0, post.dislikes - 1);
+      user.dislikedPosts = user.dislikedPosts.filter(postId => postId.toString() !== id);
+    } else {
+      // Dislike the post
+      post.dislikes += 1;
+      if (!user.dislikedPosts) user.dislikedPosts = [];
+      user.dislikedPosts.push(id);
+      // If post was liked, remove from likes
+      if (hasLiked) {
+        post.likes = Math.max(0, post.likes - 1);
+        user.likedPosts = user.likedPosts.filter(postId => postId.toString() !== id);
+      }
+    }
+
+    await post.save();
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: hasDisliked ? 'Post undisliked' : 'Post disliked',
+      likes: post.likes,
+      dislikes: post.dislikes,
+      isLiked: false,
+      isDisliked: !hasDisliked
+    });
+  } catch (error) {
+    console.error('Error toggling post dislike:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to toggle dislike',
+      error: error.message
+    });
+  }
+};
+
 // Get liked posts of the authenticated user
 const getLikedPosts = async (req, res) => {
   try {
     const userId = req.userId;
+    console.log("Fetching liked posts for user:", userId);
     const user = await User.findById(userId).populate('likedPosts');
     
+    if (!user) {
+      console.log("User not found for liked posts.");
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    console.log("User likedPosts array:", user.likedPosts);
+
     if (!user.likedPosts || user.likedPosts.length === 0) {
+      console.log("No liked posts found for user.");
       return res.status(200).json({
         success: true,
         posts: []
@@ -204,6 +276,8 @@ const getLikedPosts = async (req, res) => {
     const posts = await Post.find({ _id: { $in: user.likedPosts } })
       .populate('user_id', 'username')
       .sort({ timestamp: -1 });
+
+    console.log("Found liked posts:", posts);
 
     res.status(200).json({
       success: true,
@@ -351,10 +425,11 @@ module.exports = {
   getOwnPosts,
   getPostsByUserId,
   toggleLikePost,
+  toggleDislikePost, // Add this line
   getLikedPosts,
   getAllPosts,
   getPostById,
   searchPosts,
-  deletePost
-  ,getRecommendedPosts
+  deletePost,
+  getRecommendedPosts
 };

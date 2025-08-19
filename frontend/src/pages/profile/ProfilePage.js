@@ -3,8 +3,11 @@ import axios from "axios";
 import Navbar from "../../components/Navbar";
 import Sidebar from "../../components/Sidebar";
 
+import { useNavigate } from "react-router-dom";
+
 function ProfilePage() {
     const [user, setUser] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -65,7 +68,7 @@ function ProfilePage() {
                                 </div>
                             </div>
 
-                            <button className="btn btn-primary mt-3">Edit Profile</button>
+                            <button className="btn btn-primary mt-3" onClick={() => navigate('/settings')}>Settings</button>
                         </div>
                     </div>
                 </div>

@@ -8,6 +8,7 @@ const {
   getOwnPosts,
   getPostsByUserId,
   toggleLikePost,
+  toggleDislikePost,
   getLikedPosts,
   getAllPosts,
   getPostById,
@@ -38,6 +39,9 @@ router.get('/:id', getPostById);
 
 // Like/unlike a post
 router.post('/togglelike/:id', authenticate, toggleLikePost);
+
+// Dislike/undislike a post
+router.post('/toggledislike/:id', authenticate, toggleDislikePost);
 
 // Get liked posts of the authenticated user
 router.get('/likedPosts', authenticate, getLikedPosts);

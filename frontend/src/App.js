@@ -18,9 +18,9 @@ import WatchHistoryPage from "./pages/videos/WatchHistoryPage";
 
 // Post Pages
 import UploadPostPage from "./pages/posts/UploadPostPage";
-import LikedPostsPage from "./pages/posts/LikedPostsPage";
 import MyPostsPage from "./pages/posts/MyPostsPage";
 import RecommendedPostsPage from "./pages/posts/RecommendedPostsPage";
+import PostDetailPage from "./pages/posts/PostDetailPage";
 import SubscribedChannelsPage from "./pages/subscribedChannels/subscribedChannelsPage";
 import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
@@ -52,8 +52,10 @@ function App() {
         {/* Post Pages */}
   <Route path="/upload-post" element={<UploadPostPage />} />
   {/* <Route path="/my-posts" element={<MyPostsPage />} /> */}
-  <Route path="/liked-posts" element={<LikedPostsPage />} />
   <Route path="/recommended-posts" element={<RecommendedPostsPage />} />
+  <Route path="/post/:id" element={<PostDetailPage />} />
+ 
+ 
 
         {/* subscribed Channels */}
         <Route path="/subscribedChannels" element={<SubscribedChannelsPage />} />

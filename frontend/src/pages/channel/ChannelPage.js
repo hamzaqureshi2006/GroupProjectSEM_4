@@ -14,22 +14,19 @@ export default function ChannelPage() {
   const [activeTab, setActiveTab] = useState('Videos');
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [posts, setPosts] = useState([]);
-  const [recommendedPosts, setRecommendedPosts] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [userRes, videosRes, postsRes, recommendedRes, meRes] = await Promise.all([
+        const [userRes, videosRes, postsRes, meRes] = await Promise.all([
           axios.get(`http://localhost:5000/api/users/getUserDetailsById/${id}`, { withCredentials: true }),
           axios.get(`http://localhost:5000/api/videos/byUser/${id}`),
           axios.get(`http://localhost:5000/api/posts/byUser/${id}`),
-          axios.get('http://localhost:5000/api/posts/recommended', { withCredentials: true }),
           axios.get('http://localhost:5000/api/users/me', { withCredentials: true })
         ]);
         setChannel(userRes.data);
         setVideos(videosRes.data || []);
         setPosts(postsRes.data.posts || []);
-        setRecommendedPosts(recommendedRes.data.posts || []);
         const me = meRes.data;
         if (me?._id && userRes.data?._id) {
           // naive: refetch me full to get subscribedChannels
@@ -133,40 +130,7 @@ export default function ChannelPage() {
                       </div>
                     ))
                   )}
-                  <h4 className="mt-4 mb-3">Recommended Posts</h4>
-                  <div className="row g-3">
-                    {recommendedPosts.length === 0 ? (
-                      <div className="text-muted">No recommendations yet.</div>
-                    ) : (
-                      recommendedPosts.map(post => (
-                        <div className="col-md-6" key={post._id}>
-                          <div className="card glass shadow-soft p-2 mb-3">
-                            {post.image_url && (
-                              <img src={post.image_url} alt={post.title} style={{ width: '100%', height: 180, objectFit: 'cover', borderRadius: 8 }} />
-                            )}
-                            <div className="p-2">
-                              <div className="fw-bold">{post.title}</div>
-                              <small className="text-muted">{post.views} views • {new Date(post.timestamp).toLocaleDateString()}</small>
-                              <p className="mt-2" style={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{post.content}</p>
-                              <div className="d-flex align-items-center mt-2">
-                                <span className="me-3">
-                                  <i className="fas fa-heart text-danger me-1"></i>
-                                  {post.likes} likes
-                                </span>
-                              </div>
-                              {post.tags && post.tags.length > 0 && (
-                                <div className="mt-2">
-                                  {post.tags.slice(0, 3).map((tag, idx) => (
-                                    <span key={idx} className="badge bg-secondary me-1">{tag}</span>
-                                  ))}
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      ))
-                    )}
-                  </div>
+                  
                 </div>
               )}
 

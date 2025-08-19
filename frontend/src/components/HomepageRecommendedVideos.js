@@ -201,7 +201,7 @@ const HomepageRecommendedVideos = () => {
           <h4 style={{marginTop: 32}}>Recommended Posts</h4>
           <div className="videos-grid">
             {recommendedPosts.map((post) => (
-              <div key={post._id} className="video-card" style={{cursor:'default'}}>
+              <div key={post._id} className="video-card" style={{cursor:'pointer'}} onClick={() => window.location.href = `/post/${post._id}`}>
                 <div className="video-thumbnail">
                   <img 
                     src={post.image_url || 'https://dummyimage.com/300x180/eee/aaa'} 
