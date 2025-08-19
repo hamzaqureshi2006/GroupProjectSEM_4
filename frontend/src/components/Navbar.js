@@ -65,6 +65,7 @@ function Navbar() {
                     />
 
                         <div id="profileDropdown" className="dropdown-content">
+                            <button onClick={() => navigate(`/channel/${user._id}`)}>My Channel</button>
                             <button onClick={() => navigate("/profile")}>Profile</button>
                             <button onClick={() => navigate("/settings")}>Settings</button>
                             <button onClick={handleLogout}>Logout</button>
