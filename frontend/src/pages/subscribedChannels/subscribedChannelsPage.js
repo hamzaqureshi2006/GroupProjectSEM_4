@@ -52,8 +52,8 @@ export default function SubscribedChannelsPage() {
                       style={{ width: 80, height: 80, borderRadius: "50%", objectFit: "cover" }}
                     />
                     <div className="mt-2 text-center">
-                      <div className="fw-bold">{ch.channelName}</div>
-                      <small className="text-muted">{ch.subscribers || 0} subscribers</small>
+                      <div className="fw-bold" style={{ color: '#A9A9A9' }}>{ch.channelName}</div>
+                      <small className="text" style={{ color: '#A9A9A9' }}>{ch.subscribers || 0} subscribers</small>
                     </div>
                   </div>
                 </div>

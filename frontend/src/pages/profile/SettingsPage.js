@@ -32,7 +32,7 @@ export default function SettingsPage() {
       <div className="content">
         <Sidebar />
         <main className="main-content container mt-4">
-          <h2>Settings</h2>
+          <h2>Change Password</h2>
           <div className="glass shadow-soft card-glass mt-16 p-4">
             <h4>Change Password</h4>
             <form onSubmit={handleSubmit}>

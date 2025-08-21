@@ -9,6 +9,7 @@ import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
 import ProfilePage from "./pages/profile/ProfilePage";
 import SettingsPage from "./pages/profile/SettingsPage";
+import EditProfilePage from "./pages/profile/EditProfilePage";
 import NewsPage from "./pages/news/NewsPage";
 import ReadArticlePage from "./pages/news/ReadArticlePage";
 import UploadVideoPage from "./pages/videos/UploadVideoPage";
@@ -43,6 +44,7 @@ function App() {
         {/* Profile Settings Page */}
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/settings" element={<SettingsPage />} />
+        <Route path="/edit-profile" element={<EditProfilePage />} />
 
 
         {/* Video Pages*/}

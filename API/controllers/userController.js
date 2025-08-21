@@ -81,6 +81,8 @@ const getUserDetails = async (req, res) => {
       email: user.email,
       logo: user.logo,
       banner: user.banner,
+      timestamp: user.timestamp,
+      subscribers: user.subscribers
     });
   } catch (err) {
     res.status(500).json({ message: "Server error" });
@@ -143,6 +145,42 @@ const toggleSubscribeUser = async (req, res) => {
   }
 };
 
+const updateProfile = async (req, res) => {
+    const { channelName, email } = req.body;
+    const userId = req.userId;
+
+    try {
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json({ message: "User not found" });
+
+        if (email && email !== user.email) {
+            const existingUser = await User.findOne({ email });
+            if (existingUser && existingUser._id.toString() !== userId) {
+                return res.status(400).json({ message: "Email already in use" });
+            }
+            user.email = email;
+        }
+
+                if (channelName) {
+            user.channelName = channelName;
+        }
+
+        if (req.files?.logo) {
+            user.logo = req.files.logo[0].path;
+        }
+
+        if (req.files?.banner) {
+            user.banner = req.files.banner[0].path;
+        }
+
+        
+        await user.save();
+        res.json({ message: "Profile updated successfully", user });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
 const changePassword = async (req, res) => {
   const { currentPassword, newPassword } = req.body;
   const userId = req.userId;
@@ -171,5 +209,6 @@ module.exports = {
   getUserDetails,
   getUserDetailsById,
   toggleSubscribeUser,
-  changePassword
+  changePassword,
+  updateProfile
 };

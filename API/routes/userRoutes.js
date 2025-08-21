@@ -11,7 +11,8 @@ const {
   getUserDetails,
   getUserDetailsById,
   toggleSubscribeUser,
-  changePassword
+  changePassword,
+  updateProfile
 } = require('../controllers/userController');
 
 
@@ -34,5 +35,8 @@ router.get('/toggleSubscribe/:id', authenticate, toggleSubscribeUser);
 
 // POST /api/users/change-password
 router.post('/change-password', authenticate, changePassword);
+
+// POST /api/users/update-profile
+router.post('/update-profile', authenticate, upload.fields([{ name: 'logo', maxCount: 1 }, { name: 'banner', maxCount: 1 }]), updateProfile);
 
 module.exports = router;

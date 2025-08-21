@@ -98,9 +98,9 @@ export default function ChannelPage() {
               </ul>
               {activeTab === 'Posts' && (
                 <div className="row g-3 mt-2">
-                  <h4 className="mb-3">Posts</h4>
+                
                   {posts.length === 0 ? (
-                    <div className="text-muted">No posts yet.</div>
+                    <div className="text-center" style={{ color: '#A9A9A9' }}>No posts yet.</div>
                   ) : (
                     posts.map(post => (
                       <div className="col-md-6" key={post._id}>
@@ -136,13 +136,13 @@ export default function ChannelPage() {
 
               {/* Tab Content */}
               {activeTab === 'Home' && (
-                <div className="mt-3 text-muted">Welcome to {channel.channelName}'s channel.</div>
+                <div className="mt-3 text-center" style={{ color: '#A9A9A9' }}>Welcome to {channel.channelName}'s channel.</div>
               )}
 
               {activeTab === 'Videos' && (
                 <div className="row g-3 mt-2">
                   {videos.length === 0 ? (
-                    <div className="text-muted">No videos yet.</div>
+                    <div className="text-center" style={{ color: '#A9A9A9' }}>No videos yet.</div>
                   ) : (
                     videos.map(v => (
                       <div className="col-md-4" key={v._id}>

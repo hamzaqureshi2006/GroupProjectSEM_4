@@ -31,6 +31,9 @@ router.get('/user/me', authenticate, getOwnPosts);
 // Get posts uploaded by a specific user
 router.get('/byUser/:id', getPostsByUserId);
 
+// Get liked posts of the authenticated user
+router.get('/liked-posts', authenticate, getLikedPosts);
+
 // Get all posts
 router.get('/', getAllPosts);
 
@@ -42,14 +45,6 @@ router.post('/togglelike/:id', authenticate, toggleLikePost);
 
 // Dislike/undislike a post
 router.post('/toggledislike/:id', authenticate, toggleDislikePost);
-
-// Get liked posts of the authenticated user
-router.get('/likedPosts', authenticate, getLikedPosts);
-
-// Test route to debug
-router.get('/test-liked', authenticate, (req, res) => {
-  res.json({ message: 'Route works', userId: req.userId });
-});
 
 // Search posts by title, content, or tags
 router.post('/search', searchPosts);

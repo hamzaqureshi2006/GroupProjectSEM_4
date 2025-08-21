@@ -10,6 +10,8 @@ function PostDetailPage() {
     const [post, setPost] = useState(null);
     const [loading, setLoading] = useState(true);
     const [currentUser, setCurrentUser] = useState(null);
+    const [comments, setComments] = useState([]);
+    const [commentInput, setCommentInput] = useState("");
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -24,17 +26,21 @@ function PostDetailPage() {
     }, []);
 
     useEffect(() => {
-        const fetchPost = async () => {
+        const fetchPostAndComments = async () => {
             try {
-                const res = await axios.get(`http://localhost:5000/api/posts/${id}`);
-                setPost(res.data.post);
+                const postRes = await axios.get(`http://localhost:5000/api/posts/${id}`);
+                setPost(postRes.data.post);
+
+                const commentsRes = await axios.get(`http://localhost:8000/api/comments/list/?post_id=${id}`);
+                setComments(commentsRes.data);
+
             } catch (err) {
-                console.error("Error fetching post:", err);
+                console.error("Error fetching post or comments:", err);
             } finally {
                 setLoading(false);
             }
         };
-        fetchPost();
+        fetchPostAndComments();
     }, [id]);
 
     const handleLike = async () => {
@@ -61,6 +67,31 @@ function PostDetailPage() {
 
     if (loading) return <div>Loading...</div>;
     if (!post) return <div>Post not found</div>;
+
+    const handleCommentSubmit = async (e) => {
+        e.preventDefault();
+        if (!commentInput.trim()) return;
+        if (!currentUser?._id) {
+            alert("You must be logged in to comment.");
+            return;
+        }
+
+        try {
+            const res = await axios.post(
+                "http://localhost:8000/api/comments/create/",
+                {
+                    commentText: commentInput,
+                    post_id: id,
+                    user_id: currentUser._id,
+                }
+            );
+            setComments((prev) => [...prev, res.data]);
+            setCommentInput("");
+        } catch (err) {
+            console.error("Failed to add comment:", err);
+            alert("Failed to add comment.");
+        }
+    };
 
     return (
         <>
@@ -90,6 +121,66 @@ function PostDetailPage() {
                                 </div>
                                 <hr />
                                 <div dangerouslySetInnerHTML={{ __html: post.content }}></div>
+
+                                {/* Comments Section */}
+                                <h5 className="mt-4">Comments</h5>
+                                <form onSubmit={handleCommentSubmit} className="mb-3">
+                                    <div className="input-group">
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            placeholder={currentUser ? "Add a comment..." : "Login to comment"}
+                                            value={commentInput}
+                                            onChange={(e) => setCommentInput(e.target.value)}
+                                            disabled={!currentUser}
+                                        />
+                                        <button className="p-2 btn btn-primary" type="submit" disabled={!currentUser}>
+                                            Comment
+                                        </button>
+                                    </div>
+                                </form>
+
+                                <div className="py-4" style={{ maxHeight: "400px", overflowY: "auto" }}>
+                                    {comments.map((comment, idx) => (
+                                        <div key={comment._id || idx} className="d-flex mb-3">
+                                            <img
+                                                src={comment?.user?.logo || "/profilePicture.png"}
+                                                alt={comment?.user?.channelName || "User"}
+                                                style={{
+                                                    width: "40px",
+                                                    height: "40px",
+                                                    borderRadius: "50%",
+                                                    marginRight: "10px",
+                                                    objectFit: "cover",
+                                                }}
+                                            />
+                                            <div style={{ position: "relative", width: '100%' }}>
+                                                <div className="fw-bold">
+                                                    {comment?.user?.channelName || "Anonymous User"}
+                                                    <span className="ms-2 text-muted" style={{ fontSize: "12px", marginRight: "20px" }}>
+                                                        {comment.timestamp ? new Date(comment.timestamp).toLocaleDateString() : ""}
+                                                    </span>
+                                                    {comment.is_spam && (
+                                                        <span
+                                                            style={{
+                                                                display: 'inline-block',
+                                                                background: "red",
+                                                                color: "white",
+                                                                borderRadius: "8px",
+                                                                padding: "2px 8px",
+                                                                fontSize: "10px",
+                                                                fontWeight: "bold",
+                                                            }}
+                                                        >
+                                                            SPAM
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                <div>{comment.commentText}</div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
                             <div className="col-md-4">
                                 {/* Recommended Posts Sidebar */}

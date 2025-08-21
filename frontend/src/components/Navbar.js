@@ -53,7 +53,8 @@ function Navbar() {
             </div>
 
             <div className="navbar-actions">
-                <button className="btn btn-primary" onClick={() => navigate("/upload")}>Upload Video</button>
+                <button className="btn btn-primary me-2" onClick={() => navigate("/upload")}>Upload Video</button>
+                <button className="btn btn-primary" onClick={() => navigate("/upload-post")}>Upload Post</button>
 
                 {user ? (
                                     <div className="dropdown" style={{ position: "relative" }}>
@@ -67,7 +68,7 @@ function Navbar() {
                         <div id="profileDropdown" className="dropdown-content">
                             <button onClick={() => navigate(`/channel/${user._id}`)}>My Channel</button>
                             <button onClick={() => navigate("/profile")}>Profile</button>
-                            <button onClick={() => navigate("/settings")}>Settings</button>
+                            <button onClick={() => navigate("/settings")}>Change Password</button>
                             <button onClick={handleLogout}>Logout</button>
                         </div>
                     </div>

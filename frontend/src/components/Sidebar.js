@@ -11,7 +11,6 @@ export default function Sidebar() {
                 <li className="mb-3 sidebar-item" onClick={() => navigate("/watchHistory")}>Watch History</li>
                 
                 {/* Post Section */}
-                <li className="mb-3 sidebar-item" onClick={() => navigate("/upload-post")}>Upload Post</li>
                 <li className="mb-3 sidebar-item" onClick={() => navigate("/liked-posts")}>Liked Posts</li>
                 
                 <li className="mb-3 sidebar-item" onClick={() => navigate("/subscribedChannels")}>Subscribed Channels</li>

@@ -7,7 +7,7 @@
   --brand-end: #60A5FA;   /* sky blue */
   --accent-start: #1E3A8A; /* deep blue */
   --accent-end: #60A5FA;   /* sky blue */
-  --glass-bg: rgba(30, 58, 138, 0.06); /* subtle blue tint */
+        --glass-bg: rgba(30, 58, 138, 0.30); /* subtle blue tint */
   --glass-border: rgba(96, 165, 250, 0.35); /* sky blue border */
   --text-primary: #e7e5e4; /* off-white */
   --text-secondary: #b8b2a7; /* warm gray */

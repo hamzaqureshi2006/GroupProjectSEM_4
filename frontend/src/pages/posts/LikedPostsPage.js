@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import Sidebar from "../../components/Sidebar";
 import axios from "axios";
+import "./LikedPostsPage.css";
 
 function LikedPostsPage() {
     const navigate = useNavigate();
@@ -12,14 +13,7 @@ function LikedPostsPage() {
     useEffect(() => {
         const fetchLikedPosts = async () => {
             try {
-                // Test route first
-                const testRes = await axios.get("http://localhost:5000/api/posts/test-liked", { 
-                    withCredentials: true 
-                });
-                console.log("Test route works:", testRes.data);
-                
-                // Now try the actual route
-                const res = await axios.get("http://localhost:5000/api/posts/likedPosts", { 
+                const res = await axios.get("http://localhost:5000/api/posts/liked-posts", { 
                     withCredentials: true 
                 });
                 setPosts(res.data);

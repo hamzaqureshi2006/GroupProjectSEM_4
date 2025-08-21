@@ -64,7 +64,7 @@ function LikedVideosPage() {
                                             <img src={video.thumbnail_url} alt={video.title} className="img-fluid" style={{ width: "100%", height: "180px", objectFit: "cover", borderRadius: 12 }} />
                                         </div>
                                         <div className="col-md-8">
-                                            <h5 style={{ marginTop: 8 }}>{video.title}</h5>
+                                            <h5 style={{ marginTop: 8, color: '#A9A9A9' }}>{video.title}</h5>
                                             <p className="mb-1 text-secondary">{video.category}</p>
                                             <small className="text-secondary">{video.views} views • {new Date(video.timestamp).toLocaleDateString()}</small>
                                             <div className="mt-12">

@@ -1,0 +1,20 @@
+.clickable-card h5 {
+    color: #e7e5e4; /* Main title color */
+}
+
+.clickable-card .text-muted {
+    color: #b8b2a7 !important; /* Use global secondary text color for consistency */
+}
+
+.clickable-card p {
+    color: #d1d5db; /* A slightly less bright color for the content snippet */
+}
+
+.clickable-card .d-flex .me-3 { /* Targeting the stats spans */
+    color: #b8b2a7; 
+}
+
+.clickable-card .badge {
+    background-color: #374151 !important;
+    color: #e7e5e4;
+}

@@ -77,22 +77,21 @@ def serialize_comment(comment):
 @api_view(['GET'])
 def comment_list(request):
     video_id = request.query_params.get('video_id')
-    print(f"Requested video_id: {video_id}")
-    
-    if not video_id:
-        return Response({"error": "video_id query param is required"}, status=status.HTTP_400_BAD_REQUEST)
+    post_id = request.query_params.get('post_id')
 
-    comments_cursor = comments_collection.find({"video_id": video_id})
+    query = {}
+    if video_id:
+        query['video_id'] = video_id
+    elif post_id:
+        query['post_id'] = post_id
+    else:
+        return Response({"error": "video_id or post_id query param is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+    comments_cursor = comments_collection.find(query)
     comments = []
     
-    # Count total comments for this video
-    total_comments = comments_collection.count_documents({"video_id": video_id})
-    print(f"Total comments found for video {video_id}: {total_comments}")
-    
-    # Debug: Show all unique video_ids in comments collection
-    if total_comments == 0:
-        all_video_ids = comments_collection.distinct("video_id")
-        print(f"Available video_ids in comments collection: {all_video_ids}")
+    total_comments = comments_collection.count_documents(query)
+    print(f"Total comments found: {total_comments}")
 
     for c in comments_cursor:
         try:
@@ -113,12 +112,13 @@ def comment_create(request):
     comment_text = data.get("commentText")
     user_id = data.get("user_id")
     video_id = data.get("video_id")
-    
+    post_id = data.get("post_id")
 
+    if not comment_text or not user_id:
+        return Response({"error": "commentText and user_id are required"}, status=status.HTTP_400_BAD_REQUEST)
 
-    if not all([comment_text, user_id, video_id]):
-        return Response({"error": "commentText, user_id, and video_id are required"}, 
-                        status=status.HTTP_400_BAD_REQUEST)
+    if not video_id and not post_id:
+        return Response({"error": "Either video_id or post_id is required"}, status=status.HTTP_400_BAD_REQUEST)
 
     # Spam check
     try:
@@ -132,7 +132,6 @@ def comment_create(request):
     timestamp = datetime.utcnow()
     new_comment = {
         "user_id": user_id,
-        "video_id": video_id,
         "commentText": comment_text,
         "is_spam": is_spam,
         "timestamp": timestamp,
@@ -141,6 +140,11 @@ def comment_create(request):
         "replies": [],
         "isEdited": False,
     }
+
+    if video_id:
+        new_comment['video_id'] = video_id
+    if post_id:
+        new_comment['post_id'] = post_id
 
     inserted = comments_collection.insert_one(new_comment)
     new_comment["_id"] = inserted.inserted_id
