@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
+import Footer from "./components/Footer";
 
 // Import your page components
 import HomePage from "./pages/HomePage";
@@ -30,7 +31,8 @@ import ChannelPage from "./pages/channel/ChannelPage";
 function App() {
   return (
     <Router>
-      <Routes>
+      <div className="app-container">
+        <Routes>
         {/* Home Page */}
         <Route path="/" element={<HomePage />} />
 
@@ -76,7 +78,9 @@ function App() {
         <Route path="/contact" element={<ContactPage />} />
 
 
-      </Routes>
+        </Routes>
+        <Footer />
+      </div>
     </Router>
   );
 }

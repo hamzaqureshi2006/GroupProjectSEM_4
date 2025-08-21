@@ -277,7 +277,7 @@ const [likeAnimating, setLikeAnimating] = useState(false);
                       <div style={{ position: "relative" }}>
                         <div className="fw-bold" style={{ position: "relative" }}>
                           {comment?.user?.channelName || "Anonymous User"}
-                          <span className="ms-2 text-muted" style={{ fontSize: "12px" }}>
+                          <span className="ms-2 text-muted" style={{ fontSize: "12px" ,marginRight:"280px"}}>
                             {comment.timestamp ? new Date(comment.timestamp).toLocaleDateString() : ""}
                           </span>
                           {comment.is_spam && (
@@ -292,7 +292,7 @@ const [likeAnimating, setLikeAnimating] = useState(false);
                                 padding: "2px 8px",
                                 fontSize: "10px",
                                 fontWeight: "bold",
-                                marginLeft: "8px",
+                                marginLeft: "20px",
                                 zIndex: 2,
                               }}
                             >

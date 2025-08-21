@@ -90,7 +90,7 @@ export default function ChannelPage() {
 
               {/* Tabs */}
               <ul className="nav nav-tabs mt-4">
-                {['Home', 'Videos', 'Posts', 'Playlists', 'About'].map(tab => (
+                {['Home', 'Videos', 'Posts'].map(tab => (
                   <li className="nav-item" key={tab}>
                     <button className={`nav-link ${activeTab === tab ? 'active' : ''}`} onClick={() => setActiveTab(tab)}>{tab}</button>
                   </li>
@@ -159,26 +159,7 @@ export default function ChannelPage() {
                 </div>
               )}
 
-              {activeTab === 'Playlists' && (
-                <div className="row g-3 mt-2">
-                  {/* Placeholder cards for playlists */}
-                  {[1,2,3].map((n) => (
-                    <div className="col-md-4" key={n}>
-                      <div className="card p-2">
-                        <div style={{ width: '100%', height: 180, borderRadius: 8, background: '#eceff1' }} />
-                        <div className="p-2">
-                          <div className="fw-bold">Playlist {n}</div>
-                          <small className="text-muted">Coming soon</small>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {activeTab === 'About' && (
-                <div className="mt-3 text-muted">This channel profile section is coming soon.</div>
-              )}
+              
             </>
           )}
         </main>

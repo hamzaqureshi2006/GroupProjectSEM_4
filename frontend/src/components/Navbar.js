@@ -41,11 +41,11 @@ function Navbar() {
             <div className="navbar-search">
                 <input 
                     type="text" 
-                    placeholder="Search videos, creators..." 
+                    placeholder="Search videos." 
                     onChange={(e) => { setSearchQuery(e.target.value) }} 
                 />
                 <button 
-                    className="btn btn-primary"
+                    className="btn btn-primary m-3"
                     onClick={() => navigate(`/search?search_query=${searchQuery}`)}
                 >
                     Search
