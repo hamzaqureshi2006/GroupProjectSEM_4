@@ -256,7 +256,9 @@ const getLikedPosts = async (req, res) => {
   try {
     const userId = req.userId;
     console.log("Fetching liked posts for user:", userId);
-    const user = await User.findById(userId).populate('likedPosts');
+    
+    // First get the user to see their likedPosts array
+    const user = await User.findById(userId);
     
     if (!user) {
       console.log("User not found for liked posts.");
@@ -264,25 +266,21 @@ const getLikedPosts = async (req, res) => {
     }
 
     console.log("User likedPosts array:", user.likedPosts);
+    console.log("Number of liked posts:", user.likedPosts ? user.likedPosts.length : 0);
 
     if (!user.likedPosts || user.likedPosts.length === 0) {
       console.log("No liked posts found for user.");
-      return res.status(200).json({
-        success: true,
-        posts: []
-      });
+      return res.status(200).json([]);
     }
 
+    // Get the actual post documents
     const posts = await Post.find({ _id: { $in: user.likedPosts } })
-      .populate('user_id', 'username')
+      .populate('user_id', 'channelName username')
       .sort({ timestamp: -1 });
 
-    console.log("Found liked posts:", posts);
+    console.log("Found liked posts:", posts.length, "posts");
 
-    res.status(200).json({
-      success: true,
-      posts
-    });
+    res.status(200).json(posts);
   } catch (error) {
     console.error('Error fetching liked posts:', error);
     res.status(500).json({

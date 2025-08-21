@@ -21,6 +21,7 @@ import UploadPostPage from "./pages/posts/UploadPostPage";
 import MyPostsPage from "./pages/posts/MyPostsPage";
 import RecommendedPostsPage from "./pages/posts/RecommendedPostsPage";
 import PostDetailPage from "./pages/posts/PostDetailPage";
+import LikedPostsPage from "./pages/posts/LikedPostsPage";
 import SubscribedChannelsPage from "./pages/subscribedChannels/subscribedChannelsPage";
 import AboutPage from "./pages/AboutPage";
 import ContactPage from "./pages/ContactPage";
@@ -53,6 +54,7 @@ function App() {
   <Route path="/upload-post" element={<UploadPostPage />} />
   {/* <Route path="/my-posts" element={<MyPostsPage />} /> */}
   <Route path="/recommended-posts" element={<RecommendedPostsPage />} />
+  <Route path="/liked-posts" element={<LikedPostsPage />} />
   <Route path="/post/:id" element={<PostDetailPage />} />
  
  

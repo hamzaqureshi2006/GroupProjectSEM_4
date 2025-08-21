@@ -46,6 +46,11 @@ router.post('/toggledislike/:id', authenticate, toggleDislikePost);
 // Get liked posts of the authenticated user
 router.get('/likedPosts', authenticate, getLikedPosts);
 
+// Test route to debug
+router.get('/test-liked', authenticate, (req, res) => {
+  res.json({ message: 'Route works', userId: req.userId });
+});
+
 // Search posts by title, content, or tags
 router.post('/search', searchPosts);
 
