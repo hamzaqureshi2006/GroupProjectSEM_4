@@ -27,7 +27,7 @@ function SearchResultsPage() {
             }
         };
 
-        if (query) fetchResults();
+        fetchResults();
     }, [query]);
 
     return (

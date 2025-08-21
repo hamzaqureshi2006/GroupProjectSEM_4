@@ -39,12 +39,12 @@ function Navbar() {
             <div className="navbar-brand">TrueSphere</div>
 
             <div className="navbar-search">
-                <input 
-                    type="text" 
-                    placeholder="Search videos." 
-                    onChange={(e) => { setSearchQuery(e.target.value) }} 
+                <input
+                    type="text"
+                    placeholder="Search videos."
+                    onChange={(e) => { setSearchQuery(e.target.value) }}
                 />
-                <button 
+                <button
                     className="btn btn-primary m-3"
                     onClick={() => navigate(`/search?search_query=${searchQuery}`)}
                 >
@@ -53,17 +53,17 @@ function Navbar() {
             </div>
 
             <div className="navbar-actions">
-                <button className="btn btn-primary me-2" onClick={() => navigate("/upload")}>Upload Video</button>
-                <button className="btn btn-primary" onClick={() => navigate("/upload-post")}>Upload Post</button>
 
                 {user ? (
-                                    <div className="dropdown" style={{ position: "relative" }}>
-                    <img
-                        src={user.logo ? user.logo : "profilePicture.png"}
-                        alt="Profile"
-                        className="profile-logo"
-                        onClick={() => document.getElementById("profileDropdown").classList.toggle("show")}
-                    />
+                    <div className="dropdown" style={{ position: "relative" }}>
+                        <button className="btn btn-primary me-2" onClick={() => navigate("/upload")}>Upload Video</button>
+                        <button className="btn btn-primary" onClick={() => navigate("/upload-post")}>Upload Post</button>
+                        <img
+                            src={user.logo ? user.logo : "profilePicture.png"}
+                            alt="Profile"
+                            className="profile-logo"
+                            onClick={() => document.getElementById("profileDropdown").classList.toggle("show")}
+                        />
 
                         <div id="profileDropdown" className="dropdown-content">
                             <button onClick={() => navigate(`/channel/${user._id}`)}>My Channel</button>

@@ -1,0 +1,93 @@
+/* Modern styles for ReadArticlePage */
+
+.reader-page {
+    background: #0f1218;
+    min-height: 100vh;
+    color: #e6e8ec;
+}
+
+.reader-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+.reader-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.reader-title {
+    font-size: 28px;
+    font-weight: 800;
+    margin: 0;
+}
+
+.reader-meta {
+    display: flex;
+    gap: 10px;
+    color: #9aa4b2;
+    font-size: 13px;
+}
+
+.reader-card {
+    background: #151922;
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 10px 32px rgba(0,0,0,0.35);
+}
+
+.reader-actions {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.btn-primary {
+    border: 0;
+    background: #1a73e8;
+    color: #fff;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.12s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(26,115,232,0.32);
+    background: #2c84f9;
+}
+
+.summary-card {
+    margin-top: 16px;
+    background: #0f131c;
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 14px;
+    padding: 16px;
+}
+
+.summary-title {
+    margin: 0 0 8px 0;
+    font-size: 18px;
+    font-weight: 800;
+}
+
+.article-text {
+    white-space: pre-wrap;
+    line-height: 1.7;
+    color: #c7cdd6;
+}
+
+.reader-skeleton-title { height: 22px; border-radius: 6px; }
+.reader-skeleton-line { height: 14px; border-radius: 6px; }
+.skeleton { position: relative; overflow: hidden; background: #1a1f2b; }
+.skeleton::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent); animation: shimmer 1.2s infinite; }
+@keyframes shimmer { 0% { transform: translateX(-100%);} 100% { transform: translateX(100%);} }
+
+

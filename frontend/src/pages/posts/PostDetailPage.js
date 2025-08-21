@@ -4,6 +4,7 @@ import axios from 'axios';
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Sidebar';
 import './PostDetailPage.css';
+import LoginRequired from '../../components/LoginRequired';
 
 function PostDetailPage() {
     const { id } = useParams();
@@ -13,6 +14,7 @@ function PostDetailPage() {
     const [comments, setComments] = useState([]);
     const [commentInput, setCommentInput] = useState("");
 
+
     useEffect(() => {
         const fetchUser = async () => {
             try {
@@ -20,6 +22,7 @@ function PostDetailPage() {
                 setCurrentUser(res.data);
             } catch (err) {
                 console.error("Failed to fetch current user", err);
+                setCurrentUser(null)
             }
         };
         fetchUser();
@@ -92,6 +95,7 @@ function PostDetailPage() {
             alert("Failed to add comment.");
         }
     };
+    if (!currentUser) return <LoginRequired />
 
     return (
         <>

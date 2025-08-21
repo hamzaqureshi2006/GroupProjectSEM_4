@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
+import Navbar from "../../components/Navbar";
+import Sidebar from "../../components/Sidebar";
+import "./ReadArticlePage.css";
 
 export default function ReadArticlePage() {
   const { search } = useLocation();
@@ -35,24 +38,64 @@ export default function ReadArticlePage() {
     setSummarizing(false);
   }
 
-  if (loading) return <p>Loading article...</p>;
+  if (loading) return (
+    <div className="reader-page">
+      <Navbar />
+      <div className="container-fluid">
+        <div className="row">
+          <div className="col-md-2 p-0 sidebar-col">
+            <Sidebar />
+          </div>
+          <div className="col-md-10 p-0">
+            <div className="reader-container">
+              <div className="reader-header">
+                <h1 className="reader-title">Loading article...</h1>
+              </div>
+              <div className="reader-card">
+                <div className="skeleton reader-skeleton-title" style={{ width: "60%", marginBottom: 12 }} />
+                {Array.from({ length: 10 }).map((_, i) => (
+                  <div key={i} className="skeleton reader-skeleton-line" style={{ width: `${80 - (i % 4) * 10}%`, marginBottom: 10 }} />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>Full Article</h1>
-      <p>{fullText}</p>
-
-      <hr />
-      <button onClick={handleSummarize} disabled={summarizing}>
-        {summarizing ? "Summarizing..." : "Summarize Article"}
-      </button>
-
-      {summary && (
-        <div style={{ marginTop: "20px", padding: "10px" }}>
-          <h2>Summary</h2>
-          <p>{summary}</p>
+    <div className="reader-page">
+      <Navbar />
+      <div className="container-fluid">
+        <div className="row">
+          <div className="col-md-2 p-0 sidebar-col">
+            <Sidebar />
+          </div>
+          <div className="col-md-10 p-0">
+            <div className="reader-container">
+              <div className="reader-header">
+                <h1 className="reader-title">Full Article</h1>
+                <div className="reader-actions">
+                  <button className="btn-primary" onClick={handleSummarize} disabled={summarizing}>
+                    {summarizing ? "Summarizing..." : "Summarize Article"}
+                  </button>
+                </div>
+              </div>
+              {summary && (
+                <div className="summary-card" >
+                  <h2 className="summary-title">Summary</h2>
+                  <div className="article-text">{summary}</div>
+                </div>
+              )}
+              <br/>
+              <div className="reader-card">
+                <div className="article-text">{fullText}</div>
+              </div>
+            </div>
+          </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }

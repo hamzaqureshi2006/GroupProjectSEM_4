@@ -4,18 +4,6 @@ import Sidebar from "../components/Sidebar";
 import HomepageRecommendedVideos from "../components/HomepageRecommendedVideos";
 
 function HomePage() {
-
-
-    // Dummy video data
-    const videos = Array.from({ length: 9 }, (_, i) => ({
-        id: i + 1,
-        title: `Video Title ${i + 1}`,
-        creator: `Creator ${i + 1}`,
-        views: Math.floor(Math.random() * 1000),
-        time: `${Math.floor(Math.random() * 60)} minutes ago`,
-        thumbnail: "https://dummyimage.com/300x180/eee/aaa"
-    }));
-
     return (
         <div className="homepage fade-in">
             <Navbar />
@@ -24,7 +12,7 @@ function HomePage() {
                 <div className="col-md-10 p-5">
                     {/* Recommended Videos Section */}
                     <HomepageRecommendedVideos />
-                    
+
                     {/* Other Content */}
                     {/* <div className="row">
                         {videos.map(video => (
