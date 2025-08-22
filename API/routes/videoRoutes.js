@@ -5,30 +5,30 @@ const upload = require('../middleware/multer'); // For thumbnails
 const authenticate = require('../middleware/authenticate');
 
 const {
-  uploadVideoController,
-  deleteVideo,
-  toggledislikeVideo,
-  togglelikeVideo,
-  getOwnVideos,
-  watchVideo,
-  getLikedVideos,
-  getWatchedVideos,
-  searchVideos,
-  getVideosByUserId,
-  getRecommendedVideos,
-  getHomepageRecommendations
+    uploadVideoController,
+    deleteVideo,
+    toggledislikeVideo,
+    togglelikeVideo,
+    getOwnVideos,
+    watchVideo,
+    getLikedVideos,
+    getWatchedVideos,
+    searchVideos,
+    getVideosByUserId,
+    getRecommendedVideos,
+    getHomepageRecommendations
 } = require('../controllers/videoController');
 
 // upload video , delete video , get Liked videos , get viewed videos 
 
 router.post(
-  '/upload',
-  authenticate,
-  upload.fields([
-    { name: 'thumbnail', maxCount: 1 },
-    { name: 'video', maxCount: 1 }
-  ]),
-  uploadVideoController
+    '/upload',
+    authenticate,
+    upload.fields([
+        { name: 'thumbnail', maxCount: 1 },
+        { name: 'video', maxCount: 1 }
+    ]),
+    uploadVideoController
 );
 
 // Delete a video
@@ -60,10 +60,10 @@ router.get('/likedVideos', authenticate, getLikedVideos);
 router.get('/watchedVideos', authenticate, getWatchedVideos);
 
 // Get recommended videos for a specific video
-router.get('/recommend/:videoId', getRecommendedVideos);
+router.get('/recommend/:videoId', authenticate, getRecommendedVideos);
 
 // Get homepage recommended videos
-router.get('/homepage-recommendations', getHomepageRecommendations);
+router.get('/homepage-recommendations', authenticate, getHomepageRecommendations);
 
 module.exports = router;
 

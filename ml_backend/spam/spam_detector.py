@@ -1,42 +1,14 @@
 import os
 import joblib
+import pandas as pd
 import numpy as np
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.naive_bayes import MultinomialNB
 
 # Example dataset — you can replace with real spam/ham samples
-TRAIN_TEXTS = [
-    "win free lottery now",
-    "claim your prize money",
-    "urgent! click this link",
-    "buy cheap products here",
-    "earn money fast",
-    "congratulations you won",
-    "meet me at the park",
-    "how are you doing today",
-    "let's catch up tomorrow",
-    "project meeting at 5pm",
-    "free vacation offer",
-    "limited time deal",
-    "cheap loans available",
-    "schedule for next week",
-    "family dinner tonight",
-    "your order has shipped",
-    "urgent account verification",
-    "please see attached report",
-    "discount coupon inside",
-    "love this video",
-    "weekend hiking trip",
-    "new movie release",
-]
-TRAIN_LABELS = [
-    1, 1, 1, 1, 1, 1,   # spam
-    0, 0, 0, 0,         # ham
-    1, 1, 1,            # spam
-    0, 0, 0, 0,         # ham
-    1,                  # spam
-    0, 0, 0, 0          # ham
-]
+df = pd.read_csv('spam/spam.csv')
+TRAIN_TEXTS = df["CONTENT"]
+TRAIN_LABELS = df["CLASS"]
 
 class SpamDetector:
     def __init__(self, threshold=0.65, model_path="spam_model.pkl", vectorizer_path="vectorizer.pkl"):
