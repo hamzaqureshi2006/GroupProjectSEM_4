@@ -27,6 +27,7 @@ class SpamDetector:
         X = self.vectorizer.fit_transform(TRAIN_TEXTS)
         self.classifier = MultinomialNB()
         self.classifier.fit(X, TRAIN_LABELS)
+        print("Model is TRAINED")
 
         joblib.dump(self.classifier, self.model_path)
         joblib.dump(self.vectorizer, self.vectorizer_path)
