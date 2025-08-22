@@ -279,7 +279,7 @@ function VideoWatchPage() {
                                                 />
                                                 <div style={{ position: "relative" }}>
                                                     <div className="fw-bold" style={{ position: "relative" }}>
-                                                        {comment?.user?.channelName || "Anonymous User ( Account Deleted )"}
+                                                        {comment?.user?.channelName || "Deleted User"}
                                                         <span className="ms-2 text-muted" style={{ fontSize: "12px", marginRight: "100px" }}>
                                                             {comment.timestamp ? new Date(comment.timestamp).toLocaleDateString() : ""}
                                                         </span>
