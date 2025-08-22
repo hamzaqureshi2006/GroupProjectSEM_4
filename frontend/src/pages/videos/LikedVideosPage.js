@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import Sidebar from "../../components/Sidebar";
 import axios from "axios";
+import LoginRequired from "../../components/LoginRequired";
 
 
 // This page displays the liked videos of the user
@@ -11,6 +12,7 @@ function LikedVideosPage() {
     const navigate = useNavigate();
 
     const [videos, setVideos] = useState([]);
+    const [error, setError] = useState(false)
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -20,6 +22,7 @@ function LikedVideosPage() {
                 setVideos(res.data);
             } catch (err) {
                 console.error("Error fetching search results:", err);
+                setError(true)
             } finally {
                 setLoading(false);
             }
@@ -27,6 +30,10 @@ function LikedVideosPage() {
 
         fetchResults();
     }, []);
+
+    if (error) {
+        return <LoginRequired />
+    }
 
     return (
         <div className="homepage fade-in">

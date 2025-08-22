@@ -260,49 +260,51 @@ function VideoWatchPage() {
                                 {/* Comments List */}
                                 <div className="py-4" style={{ maxHeight: "400px", overflowY: "auto" }}>
                                     {comments.map((comment, idx) => (
-                                        <div
-                                            key={comment._id || idx}
-                                            className="d-flex mb-3"
-                                            style={{ position: "relative" }}
-                                        >
-                                            <img
-                                                src={comment?.user?.logo || "/profilePicture.png"}
-                                                alt={comment?.user?.channelName || "User"}
-                                                style={{
-                                                    width: "40px",
-                                                    height: "40px",
-                                                    borderRadius: "50%",
-                                                    marginRight: "10px",
-                                                    objectFit: "cover",
-                                                }}
-                                            />
-                                            <div style={{ position: "relative" }}>
-                                                <div className="fw-bold" style={{ position: "relative" }}>
-                                                    {comment?.user?.channelName || "Anonymous User"}
-                                                    <span className="ms-2 text-muted" style={{ fontSize: "12px", marginRight: "100px" }}>
-                                                        {comment.timestamp ? new Date(comment.timestamp).toLocaleDateString() : ""}
-                                                    </span>
-                                                    {comment.is_spam && (
-                                                        <span
-                                                            style={{
-                                                                position: "absolute",
-                                                                top: 0,
-                                                                right: 0,
-                                                                background: "red",
-                                                                color: "white",
-                                                                borderRadius: "8px",
-                                                                padding: "2px 8px",
-                                                                fontSize: "10px",
-                                                                fontWeight: "bold",
-                                                                marginLeft: "20px",
-                                                                zIndex: 2,
-                                                            }}
-                                                        >
-                                                            SPAM
+                                        <div>
+                                            <div
+                                                key={comment._id || idx}
+                                                className="d-flex mb-3"
+                                                style={{ position: "relative" }}
+                                            >
+                                                <img
+                                                    src={comment?.user?.logo || "/profilePicture.png"}
+                                                    alt={comment?.user?.channelName || "User"}
+                                                    style={{
+                                                        width: "40px",
+                                                        height: "40px",
+                                                        borderRadius: "50%",
+                                                        marginRight: "20px",
+                                                        objectFit: "cover",
+                                                    }}
+                                                />
+                                                <div style={{ position: "relative" }}>
+                                                    <div className="fw-bold" style={{ position: "relative" }}>
+                                                        {comment?.user?.channelName || "Anonymous User ( Account Deleted )"}
+                                                        <span className="ms-2 text-muted" style={{ fontSize: "12px", marginRight: "100px" }}>
+                                                            {comment.timestamp ? new Date(comment.timestamp).toLocaleDateString() : ""}
                                                         </span>
-                                                    )}
+                                                        {comment.is_spam && (
+                                                            <span
+                                                                style={{
+                                                                    position: "relative",
+                                                                    top: 0,
+                                                                    right: 0,
+                                                                    background: "red",
+                                                                    color: "white",
+                                                                    borderRadius: "8px",
+                                                                    padding: "2px 8px",
+                                                                    fontSize: "10px",
+                                                                    fontWeight: "bold",
+                                                                    marginLeft: "5px",
+                                                                    zIndex: 2,
+                                                                }}
+                                                            >
+                                                                SPAM
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                    <div>{comment.commentText}</div>
                                                 </div>
-                                                <div>{comment.commentText}</div>
                                             </div>
                                         </div>
                                     ))}

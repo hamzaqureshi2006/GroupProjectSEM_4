@@ -4,22 +4,25 @@ import Navbar from "../../components/Navbar";
 import Sidebar from "../../components/Sidebar";
 import axios from "axios";
 import "./LikedPostsPage.css";
+import LoginRequired from "../../components/LoginRequired";
 
 function LikedPostsPage() {
     const navigate = useNavigate();
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(false)
 
     useEffect(() => {
         const fetchLikedPosts = async () => {
             try {
-                const res = await axios.get("http://localhost:5000/api/posts/liked-posts", { 
-                    withCredentials: true 
+                const res = await axios.get("http://localhost:5000/api/posts/liked-posts", {
+                    withCredentials: true
                 });
                 setPosts(res.data);
             } catch (err) {
                 console.error("Error fetching liked posts:", err);
                 console.error("Error response:", err.response?.data);
+                setError(true)
             } finally {
                 setLoading(false);
             }
@@ -31,7 +34,9 @@ function LikedPostsPage() {
     const handlePostClick = (postId) => {
         navigate(`/post/${postId}`);
     };
-
+    if (error) {
+        return <LoginRequired />
+    }
     return (
         <div className="homepage fade-in">
             <Navbar />
@@ -64,20 +69,20 @@ function LikedPostsPage() {
                     ) : (
                         <div className="grid-gap-16 mt-16">
                             {posts.map(post => (
-                                <div 
-                                    key={post._id} 
-                                    className="card glass shadow-soft clickable-card" 
+                                <div
+                                    key={post._id}
+                                    className="card glass shadow-soft clickable-card"
                                     style={{ padding: 16, cursor: 'pointer' }}
                                     onClick={() => handlePostClick(post._id)}
                                 >
                                     <div className="row">
                                         {post.image_url && (
                                             <div className="col-md-4 mb-2">
-                                                <img 
-                                                    src={post.image_url} 
-                                                    alt={post.title} 
-                                                    className="img-fluid rounded" 
-                                                    style={{ maxHeight: 180, objectFit: 'cover', width: '100%' }} 
+                                                <img
+                                                    src={post.image_url}
+                                                    alt={post.title}
+                                                    className="img-fluid rounded"
+                                                    style={{ maxHeight: 180, objectFit: 'cover', width: '100%' }}
                                                 />
                                             </div>
                                         )}
@@ -87,11 +92,11 @@ function LikedPostsPage() {
                                                 <span className="badge bg-primary me-2">{post.category}</span>
                                                 By {post.user_id?.channelName || post.user_id?.username || 'Unknown'} • {new Date(post.timestamp).toLocaleDateString()}
                                             </p>
-                                            <p style={{ 
-                                                display: '-webkit-box', 
-                                                WebkitLineClamp: 3, 
-                                                WebkitBoxOrient: 'vertical', 
-                                                overflow: 'hidden' 
+                                            <p style={{
+                                                display: '-webkit-box',
+                                                WebkitLineClamp: 3,
+                                                WebkitBoxOrient: 'vertical',
+                                                overflow: 'hidden'
                                             }}>
                                                 {post.content}
                                             </p>

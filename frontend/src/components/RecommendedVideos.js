@@ -36,9 +36,12 @@ const RecommendedVideos = ({ videoId, currentVideoTitle }) => {
     const formatDuration = (seconds) => {
         if (!seconds) return '0:00';
         const minutes = Math.floor(seconds / 60);
-        const remainingSeconds = seconds % 60;
+        var remainingSeconds = seconds % 60;
+        remainingSeconds = remainingSeconds.toFixed(2);
+        remainingSeconds = parseInt(remainingSeconds);
         return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
     };
+
 
     const formatViews = (views) => {
         if (views >= 1000000) {
